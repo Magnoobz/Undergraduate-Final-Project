@@ -11,6 +11,8 @@ void calc_Ri_a(vector<double> h,
                int A,
                vector<vector<double>> &Ri_a)
 {
+    #pragma omp parallel for
+    
     int no_particle = h.size();
 
     vector<vector<double>> temp(no_particle);
@@ -86,11 +88,12 @@ void calc_Ni(vector<double> x,
     Ni_a = temp;    
 }
 
-void calc_ci (vector<vector<double>> Ri_a,
+void calc_ci (vector<double> x,
+              vector<vector<double>> Ri_a,
               vector<vector<double>> Ni_a,
               vector<double> &ci)
 {
-    int no_particle = Ri_a.size();
+    int no_particle = x.size();
     int A = Ri_a[0].size();
 
     double temp_num = 0;

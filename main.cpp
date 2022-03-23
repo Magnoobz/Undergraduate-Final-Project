@@ -43,56 +43,45 @@ int main()
     double x_par = x_left-n_dummy*dx;
     double y_par = y_bottom-n_dummy*dy;
 
-    // for(int i = 0; i < x_right/dx_out + 11; i++){
-    //     x_par += dx_out;
-    //     y_par = y_bottom - 6*dx_out;
-    //     for(int j = 0 ; j < y_top/dx_out + 11; j++){
-    //         y_par += dx_out;
-    //         if (x_par <= 0.205 || x_par >= 0.795 || y_par <= 0.205 || y_par >= 0.795){
-    //             x.push_back(x_par);
-    //             y.push_back(y_par);
-    //             hx.push_back(dx_out);
-    //             hy.push_back(dx_out);
-    //             k.push_back(200);
+    for(int i = 0; i < (x_right-x_left)/dx_out + 2*n_dummy-1; i++){
+        x_par += dx_out;
+        y_par = y_bottom - n_dummy*dx_out;
+        for(int j = 0 ; j < (y_top-y_bottom)/dx_out + 2*n_dummy-1; j++){
+            y_par += dx_out;
+            if (x_par <= 0.2 || x_par >= 0.8 || y_par <= 0.2 || y_par >= 0.8){
+                x.push_back(x_par);
+                y.push_back(y_par);
+                hx.push_back(dx_out);
+                hy.push_back(dx_out);
+                k.push_back(200);
 
-    //             x_w.push_back(eay*x_par);
-    //             y_w.push_back(eax*y_par);
-    //         }
-    //     }
-    // }
+                x_w.push_back(eay*x_par);
+                y_w.push_back(eax*y_par);
 
-    // x_par = 0.2;
-    // y_par = 0.2;
+                if ((x_par < x_left) || (x_par > x_right) || (y_par < y_bottom) || (y_par > y_top))
+                {
+                    is_dummy.push_back(1);
+                }
+                else
+                {
+                    is_dummy.push_back(0);
+                }
+            }
+        }
+    }
 
-    // for(int i = 0; i < (x_right-0.4)/dx_in - 1; i++){
-    //     x_par += dx_in;
-    //     y_par = 0.2;
-    //     for(int j = 0 ; j < (y_top-0.4)/dx_in - 1; j++){
-    //         y_par += dx_in;
-    //         x.push_back(x_par);
-    //         y.push_back(y_par);
-    //         hx.push_back(dx_in);
-    //         hy.push_back(dx_in);
-    //         k.push_back(200);
+    x_par = 0.2 - 0.5*dx_in;
+    y_par = 0.2 - 0.5*dx_in;
 
-    //         x_w.push_back(eay*x_par);
-    //         y_w.push_back(eax*y_par);
-    //     }
-    // }
-
-    for (int i = 0; i < nx+2*n_dummy - 1; i++)
-    {
-        x_par += dx;
-        y_par = y_bottom-n_dummy*dy;
-
-        for (int j = 0; j < ny+2*n_dummy - 1; j++)
-        {
-            y_par += dy;
-
+    for(int i = 0; i < (x_right-x_left-0.4)/dx_in; i++){
+        x_par += dx_in;
+        y_par = 0.2 - 0.5*dx_in;
+        for(int j = 0 ; j < (y_top-y_bottom-0.4)/dx_in; j++){
+            y_par += dx_in;
             x.push_back(x_par);
             y.push_back(y_par);
-            hx.push_back(dx);
-            hy.push_back(dy);
+            hx.push_back(dx_in);
+            hy.push_back(dx_in);
             k.push_back(200);
 
             x_w.push_back(eay*x_par);
@@ -108,6 +97,35 @@ int main()
             }
         }
     }
+
+    // for (int i = 0; i < nx+2*n_dummy - 1; i++)
+    // {
+    //     x_par += dx;
+    //     y_par = y_bottom-n_dummy*dy;
+
+    //     for (int j = 0; j < ny+2*n_dummy - 1; j++)
+    //     {
+    //         y_par += dy;
+
+    //         x.push_back(x_par);
+    //         y.push_back(y_par);
+    //         hx.push_back(dx);
+    //         hy.push_back(dy);
+    //         k.push_back(200);
+
+    //         x_w.push_back(eay*x_par);
+    //         y_w.push_back(eax*y_par);
+
+    //         if ((x_par < x_left) || (x_par > x_right) || (y_par < y_bottom) || (y_par > y_top))
+    //         {
+    //             is_dummy.push_back(1);
+    //         }
+    //         else
+    //         {
+    //             is_dummy.push_back(0);
+    //         }
+    //     }
+    // }
 
     int num_particle = x.size();
 
@@ -141,16 +159,16 @@ int main()
         }
 
         // Test Function 1
-        T[i] = -1/(8*pow(M_PI,2))*sin(2*M_PI*x[i])*sin(2*M_PI*y[i]);
-        Laplacian_T_analytic[i] = sin(2*M_PI*x[i])*sin(2*M_PI*y[i]);
+        // T[i] = -1/(8*pow(M_PI,2))*sin(2*M_PI*x[i])*sin(2*M_PI*y[i]);
+        // Laplacian_T_analytic[i] = sin(2*M_PI*x[i])*sin(2*M_PI*y[i]);
 
         // Test Function 2
-        // T[i] = 100+50*(cos(M_PI*x[i])+cos(M_PI*y[i]));
-        // Laplacian_T_analytic[i] = -50*pow(M_PI,2)*(cos(M_PI*x[i])+cos(M_PI*y[i]));
+        T[i] = 100+50*(cos(M_PI*x[i])+cos(M_PI*y[i]));
+        Laplacian_T_analytic[i] = -50*pow(M_PI,2)*(cos(M_PI*x[i])+cos(M_PI*y[i]));
 
     }
 
-    double R_e = 2.2;
+    double R_e = 2.1;
     brute_force(x_w,y_w,hx,eay,neighbor,weight_data,R_e);
 
     vector<vector<vector<double>>> LSMPS_eta(num_particle, vector<vector<double>>(5));
@@ -182,7 +200,7 @@ int main()
 
     ofstream output;
 
-    output.open("output/Test Laplacian/Tes Ubah Dummy Partikel/Test Function 1/Hasil_dummy1_2.1.csv");
+    output.open("output/Test Laplacian/Multiresolusi/Test Function 2/Hasil_0.01_0.012.csv");
 
     output << "x" << "," << "y" << "," << "Analytic" << "," << "LSMPS_Conserved" << "," << "LSMPS_Laplacian\n";
 

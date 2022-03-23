@@ -14,10 +14,12 @@ void calc_DeltaX(vector<double> x,
                  vector<double> &delta_x,
                  vector<double> &delta_y)
 {
+    #pragma omp parallel for
+    
     int no_particle = x.size();
 
-    vector<double> temp_x;
-    vector<double> temp_y;
+    vector<double> temp_x(no_particle);
+    vector<double> temp_y(no_particle);
 
     for (int i = 0; i < no_particle; i++)
     {
@@ -30,10 +32,12 @@ void calc_DeltaX(vector<double> x,
 
         for (int j = 0; j < no_neighbor; j++)
         {
-            double xj = x[j];
-            double yj = y[j];
-            double Lj = h[j];
-            double Pj = ci[j];
+            int idxj = neighbor[i][j];
+            
+            double xj = x[idxj];
+            double yj = y[idxj];
+            double Lj = h[idxj];
+            double Pj = ci[idxj];
             
             double Rij = 0.5*(Li+Lj)*R_e;
             double wij = weight[i][j];
