@@ -14,8 +14,6 @@ void initialize_particle(double x_left,
                          vector<double>& y,
                          vector<double>& h)
 {
-    #pragma omp parallel
-    
     double x_length = x_right-x_left;
     double y_length = y_top-y_bottom;
 
@@ -30,6 +28,7 @@ void initialize_particle(double x_left,
     double x_par = x_left-n_dummy*dx;
     double y_par = y_bottom-n_dummy*dy;
 
+    #pragma omp parallel for
     for (int i = 0; i < nx + 2*n_dummy-1; i++)
     {
         x_par += dx;

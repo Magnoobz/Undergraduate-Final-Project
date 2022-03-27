@@ -14,13 +14,12 @@ void calc_DeltaX(vector<double> x,
                  vector<double> &delta_x,
                  vector<double> &delta_y)
 {
-    #pragma omp parallel
-    
     int no_particle = x.size();
 
     vector<double> temp_x(no_particle);
     vector<double> temp_y(no_particle);
 
+    #pragma omp parallel for
     for (int i = 0; i < no_particle; i++)
     {
         int no_neighbor = neighbor[i].size();

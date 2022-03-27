@@ -14,7 +14,6 @@ void calc_kdeltaT(vector<double> x,
                   vector<double> &kdeltaT_x,
                   vector<double> &kdeltaT_y)
 {
-    #pragma omp parallel
     int no_particle = x.size();
 
     vector<vector<double>> eta_x(no_particle);
@@ -23,6 +22,7 @@ void calc_kdeltaT(vector<double> x,
     vector<double> temp_x(no_particle);
     vector<double> temp_y(no_particle);
 
+    #pragma omp parallel for
     for (int i = 0; i < no_particle; i++)
     {
         if (is_dummy[i] == 1)
@@ -74,12 +74,12 @@ void calc_LSMPS_like(vector<double> x,
                      vector<vector<double>> &kdeltaT_ij_x,
                      vector<vector<double>> &kdeltaT_ij_y)
 {
-    #pragma omp parallel
     int no_particle = x.size();
 
     vector<vector<double>> temp_x(no_particle);
     vector<vector<double>> temp_y(no_particle);
 
+    #pragma omp parallel for
     for (int i = 0; i < no_particle; i++)
     {
         if (is_dummy[i] == 0)
@@ -117,11 +117,11 @@ void calc_MPS_like_value(vector<double> x,
                          vector<vector<int>> neighbor,
                          vector<vector<double>> &kdeltaT_ij)
 {
-    #pragma omp parallel
     int no_particle = x.size();
 
     vector<vector<double>> temp(no_particle);
 
+    #pragma omp parallel for
     for (int i = 0; i < no_particle; i++)
     {
         if (is_dummy[i] == 1)
@@ -168,12 +168,12 @@ void calc_MPS_like(vector<double> x,
                    vector<vector<double>> &kdeltaT_ij_x,
                    vector<vector<double>> &kdeltaT_ij_y)
 {
-    #pragma omp parallel
     int no_particle = x.size();
 
     vector<vector<double>> temp_x(no_particle);
     vector<vector<double>> temp_y(no_particle);
 
+    #pragma omp parallel for
     for (int i = 0; i < no_particle; i++)
     {
         if (is_dummy[i] == 1)
@@ -223,13 +223,13 @@ void calc_hybrid(vector<double> x,
                  vector<vector<double>> &kdeltaT_ij_x,
                  vector<vector<double>> &kdeltaT_ij_y)
 {
-    #pragma omp parallel
     int no_particle = x.size();
 
     vector<vector<double>> temp(no_particle);
     vector<vector<double>> temp_x(no_particle);
     vector<vector<double>> temp_y(no_particle);
 
+    #pragma omp parallel for
     for (int i = 0; i < no_particle; i++)
     {
         if(is_dummy[i] == 1)

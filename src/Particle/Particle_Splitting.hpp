@@ -9,8 +9,6 @@ void Particle_Splitting(vector<int> split_index,
                         vector<double> &y,
                         vector<double> &h)
 {
-    #pragma omp parallel
-
     int no_particle = x.size();
 
     int split = 0;
@@ -18,6 +16,7 @@ void Particle_Splitting(vector<int> split_index,
     vector<double> x_temp, y_temp, h_temp; 
     vector<int> not_moving_temp;
 
+    #pragma omp parallel for
     for (int i = 0; i < no_particle; i++)
     {
         if (not_moving[i] == 1)

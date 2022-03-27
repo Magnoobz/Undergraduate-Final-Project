@@ -25,11 +25,11 @@ void calc_Laplacian_3D(vector<double> k,
                        vector<int> is_dummy,
                        vector<double> &Laplacian)
 {
-    #pragma omp parallel
     int no_particle = k.size();
 
     vector<double> temp(no_particle);
 
+    #pragma omp parallel for
     for (int i = 0; i < no_particle; i++)
     {
         if(is_dummy[i] == 1)
@@ -79,11 +79,11 @@ void calc_dTdt_3D(vector<double> cp,
                   vector<int> is_dummy,
                   vector<double> &dTdt)
 {
-    #pragma omp parallel
     int no_particle = cp.size();
 
     vector<double> temp(no_particle);
 
+    #pragma omp parallel for
     for (int i = 0; i < no_particle; i++)
     {
         if(is_dummy[i] == 1)
@@ -120,7 +120,6 @@ void calc_Laplacian_From_Eta_3D(vector<vector<vector<double>>> Eta_LSMPS,
                                 vector<vector<int>> neighbor,
                                 vector<double> &Lap_Value)
 {
-    #pragma omp parallel
     int no_particle = x.size();
 
     vector<double> temp_x;
@@ -129,6 +128,7 @@ void calc_Laplacian_From_Eta_3D(vector<vector<vector<double>>> Eta_LSMPS,
 
     vector<double> temp(no_particle);
 
+    #pragma omp parallel for
     for (int i = 0; i < no_particle; i++)
     {
         if(is_dummy[i] == 1)
