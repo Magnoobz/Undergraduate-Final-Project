@@ -12,7 +12,7 @@ void calc_LSMPS_eta(vector<vector<vector<double>>> &LSMPS_eta,
                     vector<vector<int>> neighbor,
                     vector<vector<double>> weight_data)
 {
-    #pragma omp parallel for
+    #pragma omp parallel
     
     int no_particle = x.size();
 
@@ -94,12 +94,20 @@ void calc_LSMPS_eta_2(vector<vector<vector<double>>> &LSMPS_eta,
                     vector<vector<int>> neighbor,
                     vector<vector<double>> weight_data)
 {
-    #pragma omp parallel for
+    #pragma omp parallel
     
     int no_particle = x.size();
 
     double hxi = hx[0];
     double hyi = hy[0];
+
+    MatrixXd Hrs = MatrixXd::Zero(5,5);
+        
+    Hrs(0,0) = pow(hxi,-1);
+    Hrs(1,1) = pow(hyi,-1);
+    Hrs(2,2) = pow(hxi,-2)*2.0;
+    Hrs(3,3) = pow(hxi*hyi,-1);
+    Hrs(4,4) = pow(hyi,-2)*2.0;
 
     for (int i = 0; i < no_particle; i++)
     {
@@ -109,16 +117,6 @@ void calc_LSMPS_eta_2(vector<vector<vector<double>>> &LSMPS_eta,
 		double yi = y[i];
         // double hxi = hx[i];
         // double hyi = hy[i];
-
-
-        MatrixXd Hrs = MatrixXd::Zero(5,5);
-        
-        Hrs(0,0) = pow(hxi,-1);
-        Hrs(1,1) = pow(hyi,-1);
-        Hrs(2,2) = pow(hxi,-2)*2.0;
-        Hrs(3,3) = pow(hxi*hyi,-1);
-        Hrs(4,4) = pow(hyi,-2)*2.0;
-
 
         MatrixXd M = MatrixXd::Zero(5,5);
         MatrixXd P = MatrixXd::Zero(5,1);

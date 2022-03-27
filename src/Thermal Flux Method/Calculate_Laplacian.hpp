@@ -19,7 +19,7 @@ void calc_Laplacian(vector<double> k,
                     vector<int> is_dummy,
                     vector<double> &Laplacian)
 {
-    #pragma omp parallel for
+    #pragma omp parallel
     int no_particle = k.size();
 
     vector<double> temp(no_particle);
@@ -67,7 +67,7 @@ void calc_dTdt(vector<double> cp,
                vector<int> is_dummy,
                vector<double> &dTdt)
 {
-    #pragma omp parallel for
+    #pragma omp parallel
     int no_particle = cp.size();
 
     vector<double> temp(no_particle);
@@ -107,7 +107,7 @@ void calc_Laplacian_From_Eta(vector<vector<vector<double>>> Eta_LSMPS,
                              vector<vector<int>> neighbor,
                              vector<double> &Lap_Value)
 {
-    #pragma omp parallel for
+    #pragma omp parallel
     int no_particle = x.size();
 
     vector<double> temp_x;

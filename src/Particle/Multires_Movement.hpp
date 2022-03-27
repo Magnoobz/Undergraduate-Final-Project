@@ -14,7 +14,7 @@ void calc_DeltaX(vector<double> x,
                  vector<double> &delta_x,
                  vector<double> &delta_y)
 {
-    #pragma omp parallel for
+    #pragma omp parallel
     
     int no_particle = x.size();
 

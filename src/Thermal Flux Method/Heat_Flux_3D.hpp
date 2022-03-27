@@ -16,7 +16,7 @@ void calc_kdeltaT_3D(vector<double> x,
                      vector<double> &kdeltaT_y,
                      vector<double> &kdeltaT_z)
 {
-    #pragma omp parallel for
+    #pragma omp parallel
     int no_particle = x.size();
 
     vector<vector<double>> eta_x(no_particle);
@@ -86,7 +86,7 @@ void calc_LSMPS_like_3D(vector<double> x,
                         vector<vector<double>> &kdeltaT_ij_y,
                         vector<vector<double>> &kdeltaT_ij_z)
 {
-    #pragma omp parallel for
+    #pragma omp parallel
     int no_particle = x.size();
 
     vector<vector<double>> temp_x(no_particle);
@@ -134,7 +134,7 @@ void calc_MPS_like_value_3D(vector<double> x,
                             vector<vector<int>> neighbor,
                             vector<vector<double>> &kdeltaT_ij)
 {
-    #pragma omp parallel for
+    #pragma omp parallel
     int no_particle = x.size();
 
     vector<vector<double>> temp(no_particle);
@@ -189,7 +189,7 @@ void calc_MPS_like_3D(vector<double> x,
                       vector<vector<double>> &kdeltaT_ij_y,
                       vector<vector<double>> &kdeltaT_ij_z)
 {
-    #pragma omp parallel for
+    #pragma omp parallel
     int no_particle = x.size();
 
     vector<vector<double>> temp_x(no_particle);
@@ -253,7 +253,7 @@ void calc_hybrid_3D(vector<double> x,
                     vector<vector<double>> &kdeltaT_ij_y,
                     vector<vector<double>> &kdeltaT_ij_z)
 {
-    #pragma omp parallel for
+    #pragma omp parallel
     int no_particle = x.size();
 
     vector<vector<double>> temp(no_particle);

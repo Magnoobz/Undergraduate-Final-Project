@@ -11,7 +11,7 @@ void brute_force(vector<double> x_w,
                  vector<vector<double>> &weight,
                  double R_e)
 {
-    #pragma omp parallel for
+    #pragma omp parallel
     int no_particle = x_w.size();
 
     double xi, yi;
@@ -64,7 +64,7 @@ void brute_force_3D(vector<double> x_w,
                     vector<vector<double>> &weight,
                     double R_e)
 {
-    #pragma omp parallel for
+    #pragma omp parallel
     int no_particle = x_w.size();
 
     double xi, yi, zi;
@@ -118,7 +118,7 @@ void brute_force_2(vector<double> x_w,
                  vector<vector<double>> &weight,
                  double R_e)
 {
-    #pragma omp parallel for
+    #pragma omp parallel
     int no_particle = x_w.size();
 
     double xi, yi;
@@ -140,16 +140,16 @@ void brute_force_2(vector<double> x_w,
             yi = y_w[i];
             yj = y_w[j];
 
-            hi = hx[i]*eay;
-            hj = hx[j]*eay;
+            // hi = hx[i]*eay;
+            // hj = hx[j]*eay;
 
-            double h_avg = 0.5*(h+h);
+            // double h_avg = 0.5*(h+h);
 
             double dist = sqrt(pow(xi-xj,2)+pow(yi-yj,2));
 
-            if (dist <= R_e*h_avg)
+            if (dist <= R_e*h)
             {
-                double weight = pow(1-dist/(R_e*h_avg),2);
+                double weight = pow(1-dist/(R_e*h),2);
 
                 neighbor_temp[i].push_back(j);
                 neighbor_temp[j].push_back(i);
@@ -173,7 +173,7 @@ void brute_force_3D_2(vector<double> x_w,
                     vector<vector<double>> &weight,
                     double R_e)
 {
-    #pragma omp parallel for
+    #pragma omp parallel
     int no_particle = x_w.size();
 
     double xi, yi, zi;
@@ -198,16 +198,16 @@ void brute_force_3D_2(vector<double> x_w,
             zi = z_w[i];
             zj = z_w[j];
 
-            hi = hx[i]*eay*eaz;
-            hj = hx[j]*eay*eaz;
+            // hi = hx[i]*eay*eaz;
+            // hj = hx[j]*eay*eaz;
 
-            double h_avg = 0.5*(h+h);
+            // double h_avg = 0.5*(hi+hj);
 
             double dist = sqrt(pow(xi-xj,2)+pow(yi-yj,2)+pow(zi-zj,2));
 
-            if (dist <= R_e*h_avg)
+            if (dist <= R_e*h)
             {
-                double weight = pow(1-dist/(R_e*h_avg),2);
+                double weight = pow(1-dist/(R_e*h),2);
 
                 neighbor_temp[i].push_back(j);
                 neighbor_temp[j].push_back(i);

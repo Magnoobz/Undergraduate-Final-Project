@@ -14,7 +14,7 @@ void calc_LSMPS_eta_3D(vector<vector<vector<double>>> &LSMPS_eta,
                        vector<vector<int>> neighbor,
                        vector<vector<double>> weight_data)
 {
-    #pragma omp parallel for
+    #pragma omp parallel
     
     int no_particle = x.size();
 
@@ -113,7 +113,7 @@ void calc_LSMPS_eta_3D_2(vector<vector<vector<double>>> &LSMPS_eta,
                        vector<vector<int>> neighbor,
                        vector<vector<double>> weight_data)
 {
-    #pragma omp parallel for
+    #pragma omp parallel
     
     int no_particle = x.size();
 

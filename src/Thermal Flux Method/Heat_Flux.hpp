@@ -14,7 +14,7 @@ void calc_kdeltaT(vector<double> x,
                   vector<double> &kdeltaT_x,
                   vector<double> &kdeltaT_y)
 {
-    #pragma omp parallel for
+    #pragma omp parallel
     int no_particle = x.size();
 
     vector<vector<double>> eta_x(no_particle);
@@ -74,7 +74,7 @@ void calc_LSMPS_like(vector<double> x,
                      vector<vector<double>> &kdeltaT_ij_x,
                      vector<vector<double>> &kdeltaT_ij_y)
 {
-    #pragma omp parallel for
+    #pragma omp parallel
     int no_particle = x.size();
 
     vector<vector<double>> temp_x(no_particle);
@@ -117,7 +117,7 @@ void calc_MPS_like_value(vector<double> x,
                          vector<vector<int>> neighbor,
                          vector<vector<double>> &kdeltaT_ij)
 {
-    #pragma omp parallel for
+    #pragma omp parallel
     int no_particle = x.size();
 
     vector<vector<double>> temp(no_particle);
@@ -168,7 +168,7 @@ void calc_MPS_like(vector<double> x,
                    vector<vector<double>> &kdeltaT_ij_x,
                    vector<vector<double>> &kdeltaT_ij_y)
 {
-    #pragma omp parallel for
+    #pragma omp parallel
     int no_particle = x.size();
 
     vector<vector<double>> temp_x(no_particle);
@@ -223,7 +223,7 @@ void calc_hybrid(vector<double> x,
                  vector<vector<double>> &kdeltaT_ij_x,
                  vector<vector<double>> &kdeltaT_ij_y)
 {
-    #pragma omp parallel for
+    #pragma omp parallel
     int no_particle = x.size();
 
     vector<vector<double>> temp(no_particle);

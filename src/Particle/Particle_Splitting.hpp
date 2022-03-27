@@ -9,7 +9,7 @@ void Particle_Splitting(vector<int> split_index,
                         vector<double> &y,
                         vector<double> &h)
 {
-    #pragma omp parallel for
+    #pragma omp parallel
 
     int no_particle = x.size();
 
