@@ -26,6 +26,10 @@ int main()
     double z_front  = 0.01;
     double z_back   = 0;
 
+    double x_change = 0.4;
+
+    double x_multires = x_left+x_change*(x_right-x_left);
+
     double eax = 1;
     double eay = 1;
     double eaz = 1;
@@ -39,6 +43,22 @@ int main()
     int ny = 10;
     int nz = 10;
 
+    double ratio = 0.8;
+
+    // int nx1 = x_change*nx;
+    // int nx2 = (1-x_change)*nx*ratio;
+    // int ny1 = ny;
+    // int ny2 = ny*ratio;
+    // int nz1 = nz;
+    // int nz2 = nz*ratio;
+
+    int nx1 = 40;
+    int nx2 = 48;
+    int ny1 = 10;
+    int ny2 = 8;
+    int nz1 = 10;
+    int nz2 = 8;
+
     // nx += 1;
     // ny += 1;
     // nz += 1;
@@ -47,8 +67,13 @@ int main()
     double dy = (y_top-y_bottom)/(ny);
     double dz = (z_front-z_back)/(nz);
 
-    double dx_out = 0.005;
-    double dx_in  = 0.008;
+    double dx1 = (x_multires-x_left)/(nx1);
+    double dy1 = (y_top-y_bottom)/(ny1);
+    double dz1 = (z_front-z_back)/(nz1);
+
+    double dx2 = (x_right-x_multires)/(nx2);
+    double dy2 = (y_top-y_bottom)/(ny2);
+    double dz2 = (z_front-z_back)/(nz2);
 
     vector<double> x, y, z, hx, hy, hz;
     vector<double> k, cp, rho;
@@ -56,35 +81,35 @@ int main()
     vector<double> q_x, q_y, q_z;
     vector<int> is_dummy;
 
-    double n_dummy = 4;
+    double n_dummy = 6;
     n_dummy += 0.5;
 
-    double x_par = x_left-n_dummy*dx;
-    double y_par = y_bottom-n_dummy*dy;
-    double z_par = z_back-n_dummy*dz;
+    double x_par = x_left-n_dummy*dx1;
+    double y_par = y_bottom-n_dummy*dy1;
+    double z_par = z_back-n_dummy*dz1;
 
-    for (int i = 0; i < nx + 2*n_dummy - 1; i++)
+    for (int i = 0; i < nx1 + n_dummy - 0.5; i++)
     {
-        x_par += dx;
-        y_par = y_bottom-n_dummy*dy;
+        x_par += dx1;
+        y_par = y_bottom-n_dummy*dy1;
 
-        for (int j = 0; j < ny + 2*n_dummy - 1; j++)
+        for (int j = 0; j < ny1 + 2*n_dummy - 1; j++)
         {
-            y_par += dy;
-            z_par = z_back-n_dummy*dz;
+            y_par += dy1;
+            z_par = z_back-n_dummy*dz1;
 
-            for (int m = 0; m < nz + 2*n_dummy - 1; m++)
+            for (int m = 0; m < nz1 + 2*n_dummy - 1; m++)
             {
-                z_par += dz;
+                z_par += dz1;
                 
                 x.push_back(x_par);
                 y.push_back(y_par);
                 z.push_back(z_par);
-                hx.push_back(dx);
-                hy.push_back(dy);
-                hz.push_back(dz);
+                hx.push_back(dx1);
+                hy.push_back(dy1);
+                hz.push_back(dz1);
 
-                if ((x_par<x_left+dx) && (x_par>x_left))
+                if ((x_par<x_left+dx1) && (x_par>x_left))
                 {
                     q_x.push_back(1e5);
                     q_y.push_back(0);
@@ -96,6 +121,54 @@ int main()
                     q_y.push_back(0);
                     q_z.push_back(0);
                 }
+
+                k.push_back(200);
+                cp.push_back(900);
+                rho.push_back(2700);
+
+                x_w.push_back(eay*eaz*x_par);
+                y_w.push_back(eax*eaz*y_par);
+                z_w.push_back(eax*eay*z_par);
+
+                if ((x_par < x_left) || (x_par > x_right) || (y_par < y_bottom) || (y_par > y_top) || (z_par < z_back) || (z_par > z_front))
+                {
+                    is_dummy.push_back(1);
+                }
+                else
+                {
+                    is_dummy.push_back(0);
+                }
+            }
+        }
+    }
+
+    x_par = x_par + 0.5*dx1 - 0.5*dx2;
+
+    for (int i = 0; i < nx2 + n_dummy - 0.5; i++)
+    {
+        x_par += dx2;
+        y_par = y_bottom-n_dummy*dy2;
+
+        for (int j = 0; j < ny2 + 2*n_dummy - 1; j++)
+        {
+            y_par += dy2;
+            z_par = z_back-n_dummy*dz2;
+
+            for (int m = 0; m < nz2 + 2*n_dummy - 1; m++)
+            {
+                z_par += dz2;
+                
+                x.push_back(x_par);
+                y.push_back(y_par);
+                z.push_back(z_par);
+                hx.push_back(dx2);
+                hy.push_back(dy2);
+                hz.push_back(dz2);
+
+                q_x.push_back(0);
+                q_y.push_back(0);
+                q_z.push_back(0);
+                
 
                 k.push_back(200);
                 cp.push_back(900);
@@ -154,8 +227,9 @@ int main()
 
     auto start_neighbor_search = chrono::high_resolution_clock::now();
 
-    double R_e = 2.4;
+    // double R_e = 2.4;
     // brute_force_3D(x_w, y_w, z_w, hx, eay, eaz, neighbor, weight_data, R_e);
+    double R_e = 3.4;
     brute_force_3D_2(x_w, y_w, z_w, hx, eay, eaz, neighbor, weight_data, R_e);
 
     auto end_neighbor_search = chrono::high_resolution_clock::now();
@@ -199,24 +273,39 @@ int main()
     int count = 0;
     double t  = 0;
     double dt = 2e-3;
+    
+    string name1 = "output/3D External Flux/Multires/result 34/big/out_" + to_string(count) + ".csv";
+    string name2 = "output/3D External Flux/Multires/result 34/small/out_" + to_string(count) + ".csv";
 
-    string name = "output/3D External Flux/result/out_" + to_string(count) + ".csv";
+    ofstream output1, output2;
 
-    ofstream output1;
-
-    output1.open(name);
+    output1.open(name1);
+    output2.open(name2);
 
     output1 << "x" << "," << "y" << "," << "z" << "," << "qx" << "," << "LSMPS_Conserved\n";
+    output2 << "x" << "," << "y" << "," << "z" << "," << "qx" << "," << "LSMPS_Conserved\n";
 
     for (int i = 0; i < num_particle; i++)
     {
         if (x[i] >= x_left && x[i] <= x_right && y[i] >= y_bottom && y[i] <= y_top && z[i] >= z_back && z[i] <= z_front)
         {
-            output1 << x[i] << "," 
-                << y[i] << ","
-                << z[i] << ","
-                << q_x[i] << ","
-                << T[i] << "\n";
+            if (hx[i] == dx1)
+            {
+                output2 << x[i] << "," 
+                    << y[i] << ","
+                    << z[i] << ","
+                    << q_x[i] << ","
+                    << T[i] << "\n";
+            }
+            else
+            {
+                output1 << x[i] << "," 
+                    << y[i] << ","
+                    << z[i] << ","
+                    << q_x[i] << ","
+                    << T[i] << "\n";
+            }
+            
         }
     }
 
@@ -290,23 +379,38 @@ int main()
         
         if (count % 500 == 0)
         {
-            string name = "output/3D External Flux/result/out_" + to_string(count) + ".csv";
+            string name1 = "output/3D External Flux/Multires/result 34/big/out_" + to_string(count) + ".csv";
+            string name2 = "output/3D External Flux/Multires/result 34/small/out_" + to_string(count) + ".csv";
 
-            ofstream output1;
+            ofstream output1, output2;
 
-            output1.open(name);
+            output1.open(name1);
+            output2.open(name2);
 
             output1 << "x" << "," << "y" << "," << "z" << "," << "qx" << "," << "LSMPS_Conserved\n";
+            output2 << "x" << "," << "y" << "," << "z" << "," << "qx" << "," << "LSMPS_Conserved\n";
 
             for (int i = 0; i < num_particle; i++)
             {
                 if (x[i] >= x_left && x[i] <= x_right && y[i] >= y_bottom && y[i] <= y_top && z[i] >= z_back && z[i] <= z_front)
                 {
-                    output1 << x[i] << "," 
-                        << y[i] << ","
-                        << z[i] << ","
-                        << q_x[i] << ","
-                        << T[i] << "\n";
+                    if (hx[i] == dx1)
+                    {
+                        output2 << x[i] << "," 
+                            << y[i] << ","
+                            << z[i] << ","
+                            << q_x[i] << ","
+                            << T[i] << "\n";
+                    }
+                    else
+                    {
+                        output1 << x[i] << "," 
+                            << y[i] << ","
+                            << z[i] << ","
+                            << q_x[i] << ","
+                            << T[i] << "\n";
+                    }
+                    
                 }
             }
         }
@@ -323,10 +427,10 @@ int main()
     printf("Sij Star Time               : %f second\n", sijstar_time_ms/1000);
     printf("Calculation Time            : %f second\n\n", calc_time_ms/1000);
 
-    ofstream output2;
-    output2.open("output/3D External Flux/result/summary.csv");
+    ofstream output3;
+    output3.open("output/3D External Flux/Multires/result 34/summary.csv");
     
-    output2  << "Number of Particle," << x.size() <<"\n"
+    output3  << "Number of Particle," << x.size() <<"\n"
             << "Neighbor Search Time," << neighbor_time_ms/1000 << "\n"
             << "Calc Eta Time," << eta_time_ms/1000 << "\n"
             << "Sij Time," << sij_time_ms/1000 << "\n"

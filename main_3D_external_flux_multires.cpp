@@ -93,12 +93,12 @@ int main()
         x_par += dx1;
         y_par = y_bottom-n_dummy*dy1;
 
-        for (int j = 0; j < ny1 + n_dummy - 0.5; j++)
+        for (int j = 0; j < ny1 + 2*n_dummy - 1; j++)
         {
             y_par += dy1;
             z_par = z_back-n_dummy*dz1;
 
-            for (int m = 0; m < nz1 + n_dummy - 0.5; m++)
+            for (int m = 0; m < nz1 + 2*n_dummy - 1; m++)
             {
                 z_par += dz1;
                 
@@ -149,12 +149,12 @@ int main()
         x_par += dx2;
         y_par = y_bottom-n_dummy*dy2;
 
-        for (int j = 0; j < ny2 + n_dummy - 0.5; j++)
+        for (int j = 0; j < ny2 + 2*n_dummy - 1; j++)
         {
             y_par += dy2;
             z_par = z_back-n_dummy*dz2;
 
-            for (int m = 0; m < nz2 + n_dummy - 0.5; m++)
+            for (int m = 0; m < nz2 + 2*n_dummy - 1; m++)
             {
                 z_par += dz2;
                 
@@ -229,7 +229,7 @@ int main()
 
     // double R_e = 2.4;
     // brute_force_3D(x_w, y_w, z_w, hx, eay, eaz, neighbor, weight_data, R_e);
-    double R_e = 3.6;
+    double R_e = 3.2;
     brute_force_3D_2(x_w, y_w, z_w, hx, eay, eaz, neighbor, weight_data, R_e);
 
     auto end_neighbor_search = chrono::high_resolution_clock::now();
@@ -274,8 +274,8 @@ int main()
     double t  = 0;
     double dt = 2e-3;
     
-    string name1 = "output/3D External Flux/Multires/result2/big/out_" + to_string(count) + ".csv";
-    string name2 = "output/3D External Flux/Multires/result2/small/out_" + to_string(count) + ".csv";
+    string name1 = "output/3D External Flux/Multires/result 32/big/out_" + to_string(count) + ".csv";
+    string name2 = "output/3D External Flux/Multires/result 32/small/out_" + to_string(count) + ".csv";
 
     ofstream output1, output2;
 
@@ -379,8 +379,8 @@ int main()
         
         if (count % 500 == 0)
         {
-            string name1 = "output/3D External Flux/Multires/result2/big/out_" + to_string(count) + ".csv";
-            string name2 = "output/3D External Flux/Multires/result2/small/out_" + to_string(count) + ".csv";
+            string name1 = "output/3D External Flux/Multires/result 32/big/out_" + to_string(count) + ".csv";
+            string name2 = "output/3D External Flux/Multires/result 32/small/out_" + to_string(count) + ".csv";
 
             ofstream output1, output2;
 
@@ -428,7 +428,7 @@ int main()
     printf("Calculation Time            : %f second\n\n", calc_time_ms/1000);
 
     ofstream output3;
-    output3.open("output/3D External Flux/Multires/result2/summary.csv");
+    output3.open("output/3D External Flux/Multires/result 32/summary.csv");
     
     output3  << "Number of Particle," << x.size() <<"\n"
             << "Neighbor Search Time," << neighbor_time_ms/1000 << "\n"
