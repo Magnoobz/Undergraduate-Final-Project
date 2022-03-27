@@ -94,6 +94,14 @@ void calculate_Sij_Star_3D(vector<vector<double>> Sij_x,
 
         for (int j = 0; j < no_neighbor; j++)
         {
+            if (is_dummy[i] == 1)
+            {
+                Sij_Star_x[i].push_back(0);
+                Sij_Star_y[i].push_back(0);
+                Sij_Star_z[i].push_back(0);
+                continue;
+            }
+            
             for (int k = 0; k < neighbor[neighbor[i][j]].size(); k++)
             {
                 if (neighbor[neighbor[i][j]][k] == i)

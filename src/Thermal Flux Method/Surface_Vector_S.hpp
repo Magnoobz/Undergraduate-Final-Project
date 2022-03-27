@@ -84,12 +84,12 @@ void calculate_Sij_Star(vector<vector<double>> Sij_x,
 
         for (int j = 0; j < no_neighbor; j++)
         {
-            // if (is_dummy[i] == 1)
-            // {
-            //     Sij_Star_x[i].push_back(0);
-            //     Sij_Star_y[i].push_back(0);
-            //     continue;
-            // }
+            if (is_dummy[i] == 1)
+            {
+                Sij_Star_x[i].push_back(0);
+                Sij_Star_y[i].push_back(0);
+                continue;
+            }
             
             for (int k = 0; k < neighbor[neighbor[i][j]].size(); k++)
             {
@@ -97,6 +97,50 @@ void calculate_Sij_Star(vector<vector<double>> Sij_x,
                 {
                     Sij_Star_x[i].push_back(0.5*(Sij_x[i][j] - Sij_x[neighbor[i][j]][k]));
                     Sij_Star_y[i].push_back(0.5*(Sij_y[i][j] - Sij_y[neighbor[i][j]][k]));
+                    break;
+                }
+            }
+        }
+    }
+}
+
+void calculate_Sij_Star_2(vector<vector<double>> Sij_x,
+                        vector<vector<double>> Sij_y,
+                        vector<vector<double>> &Sij_Star_x,
+                        vector<vector<double>> &Sij_Star_y,
+                        vector<double> x,
+                        vector<int> is_dummy,
+                        vector<vector<int>> neighbor)
+{
+    #pragma omp parallel for
+    int no_particle = x.size();
+
+    for (int i = 0; i < no_particle; i++)
+    {
+        if (is_dummy[i] == 1)
+        {
+            continue;
+        }
+        
+        int no_neighbor = neighbor[i].size();
+
+        for (int j = 0; j < no_neighbor; j++)
+        {
+            if (is_dummy[i] == 1)
+            {
+                Sij_Star_x[i].push_back(0);
+                Sij_Star_y[i].push_back(0);
+                continue;
+            }
+            
+            for (int k = 0; k < neighbor[neighbor[i][j]].size(); k++)
+            {
+                if (neighbor[neighbor[i][j]][k] == i)
+                {
+                    double par = 0.5;
+                    
+                    Sij_Star_x[i].push_back(par*Sij_x[i][j] - (1-par)*Sij_x[neighbor[i][j]][k]);
+                    Sij_Star_y[i].push_back(par*Sij_y[i][j] - (1-par)*Sij_y[neighbor[i][j]][k]);
                     break;
                 }
             }
