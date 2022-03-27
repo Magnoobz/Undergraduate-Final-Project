@@ -4,12 +4,12 @@
 #include <fstream>
 #include <iostream>
 
-#include "src\LSMPS\LSMPS.hpp"
-#include "src\Thermal Flux Method\Heat_Flux.hpp"
-#include "src\Thermal Flux Method\Surface_Vector_S.hpp"
-#include "src\Thermal Flux Method\Calculate_Laplacian.hpp"
-#include "src\Time Integration\time_integration.hpp"
-#include "src\Neighbor Search\Brute_Force.hpp"
+#include "src/LSMPS/LSMPS.hpp"
+#include "src/Thermal Flux Method/Heat_Flux.hpp"
+#include "src/Thermal Flux Method/Surface_Vector_S.hpp"
+#include "src/Thermal Flux Method/Calculate_Laplacian.hpp"
+#include "src/Time Integration/time_integration.hpp"
+#include "src/Neighbor Search/Brute_Force.hpp"
 
 using namespace std;
 

@@ -5,13 +5,13 @@
 #include <fstream>
 #include <iostream>
 
-#include "src\LSMPS\LSMPS_3D.hpp"
-#include "src\Thermal Flux Method\Heat_Flux_3D.hpp"
-#include "src\Thermal Flux Method\Surface_Vector_S_3D.hpp"
-#include "src\Thermal Flux Method\Calculate_Laplacian_3D.hpp"
-#include "src\Time Integration\time_integration.hpp"
-#include "src\Neighbor Search\Brute_Force.hpp"
-#include "src\External Heat Flux\External_Heat_Flux.hpp"
+#include "src/LSMPS/LSMPS_3D.hpp"
+#include "src/Thermal Flux Method/Heat_Flux_3D.hpp"
+#include "src/Thermal Flux Method/Surface_Vector_S_3D.hpp"
+#include "src/Thermal Flux Method/Calculate_Laplacian_3D.hpp"
+#include "src/Time Integration/time_integration.hpp"
+#include "src/Neighbor Search/Brute_Force.hpp"
+#include "src/External Heat Flux/External_Heat_Flux.hpp"
 
 using namespace std;
 

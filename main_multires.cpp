@@ -3,11 +3,11 @@
 # include <iostream>
 # include <chrono>
 
-# include "src\Particle\Initialize_Particle.hpp"
-# include "src\Particle\Particle_Splitting.hpp"
-# include "src\Particle\Multires_Movement.hpp"
-# include "src\Neighbor Search\Brute_Force.hpp"
-# include "src\Particle\Packing_Ratio.hpp"
+# include "src/Particle/Initialize_Particle.hpp"
+# include "src/Particle/Particle_Splitting.hpp"
+# include "src/Particle/Multires_Movement.hpp"
+# include "src/Neighbor Search/Brute_Force.hpp"
+# include "src/Particle/Packing_Ratio.hpp"
 
 using namespace std;
 
