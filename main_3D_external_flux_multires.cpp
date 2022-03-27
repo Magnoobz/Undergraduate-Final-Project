@@ -26,9 +26,9 @@ int main()
     double z_front  = 0.01;
     double z_back   = 0;
 
-    double x_multires = 0.4;
+    double x_change = 0.4;
 
-    x_multires = x_left+x_multires*(x_right-x_left);
+    double x_multires = x_left+x_change*(x_right-x_left);
 
     double eax = 1;
     double eay = 1;
@@ -45,8 +45,8 @@ int main()
 
     double ratio = 0.8;
 
-    int nx1 = x_multires*nx;
-    int nx2 = (1-x_multires)*nx*ratio;
+    int nx1 = x_change*nx;
+    int nx2 = (1-x_change)*nx*ratio;
     int ny1 = ny;
     int ny2 = ny*ratio;
     int nz1 = nz;
@@ -74,7 +74,7 @@ int main()
     vector<double> q_x, q_y, q_z;
     vector<int> is_dummy;
 
-    double n_dummy = 7;
+    double n_dummy = 4;
     n_dummy += 0.5;
 
     double x_par = x_left-n_dummy*dx1;
@@ -220,9 +220,9 @@ int main()
 
     auto start_neighbor_search = chrono::high_resolution_clock::now();
 
-    // double R_e = 2.4;
+    double R_e = 2.4;
     // brute_force_3D(x_w, y_w, z_w, hx, eay, eaz, neighbor, weight_data, R_e);
-    double R_e = 3.6;
+    // double R_e = 3.6;
     brute_force_3D_2(x_w, y_w, z_w, hx, eay, eaz, neighbor, weight_data, R_e);
 
     auto end_neighbor_search = chrono::high_resolution_clock::now();
@@ -265,7 +265,7 @@ int main()
 
     int count = 0;
     double t  = 0;
-    double dt = 1e-3;
+    double dt = 2e-3;
     
     string name1 = "output/3D External Flux/Multires/result/big/out_" + to_string(count) + ".csv";
     string name2 = "output/3D External Flux/Multires/result/small/out_" + to_string(count) + ".csv";
