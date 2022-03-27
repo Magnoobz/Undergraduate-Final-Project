@@ -63,46 +63,6 @@ int main()
     double y_par = y_bottom-n_dummy*dy;
     double z_par = z_back-n_dummy*dz;
 
-    // x_par = x_left - 6*dx_out;
-    // y_par = y_bottom - 6*dx_out;
-
-    // for(int i = 0; i < x_right/dx_out + 11; i++){
-    //     x_par += dx_out;
-    //     y_par = y_bottom - 6*dx_out;
-    //     for(int j = 0 ; j < y_top/dx_out + 11; j++){
-    //         y_par += dx_out;
-    //         if (x_par <= 0.060001 || x_par >= 0.939999 || y_par <= 0.060001 || y_par >= 0.939999){
-    //             x.push_back(x_par);
-    //             y.push_back(y_par);
-    //             hx.push_back(dx_out);
-    //             hy.push_back(dx_out);
-    //             k.push_back(200);
-
-    //             x_w.push_back(eay*x_par);
-    //             y_w.push_back(eax*y_par);
-    //         }
-    //     }
-    // }
-
-    // x_par = 0.06;
-    // y_par = 0.06;
-
-    // for(int i = 0; i < (x_right-0.12)/dx_in - 1; i++){
-    //     x_par += dx_in;
-    //     y_par = 0.06;
-    //     for(int j = 0 ; j < (y_top-0.12)/dx_in - 1; j++){
-    //         y_par += dx_in;
-    //         x.push_back(x_par);
-    //         y.push_back(y_par);
-    //         hx.push_back(dx_in);
-    //         hy.push_back(dx_in);
-    //         k.push_back(200);
-
-    //         x_w.push_back(eay*x_par);
-    //         y_w.push_back(eax*y_par);
-    //     }
-    // }
-
     for (int i = 0; i < nx + 2*n_dummy - 1; i++)
     {
         x_par += dx;
@@ -195,7 +155,8 @@ int main()
     auto start_neighbor_search = chrono::high_resolution_clock::now();
 
     double R_e = 2.4;
-    brute_force_3D(x_w, y_w, z_w, hx, eay, eaz, neighbor, weight_data, R_e);
+    // brute_force_3D(x_w, y_w, z_w, hx, eay, eaz, neighbor, weight_data, R_e);
+    brute_force_3D_2(x_w, y_w, z_w, hx, eay, eaz, neighbor, weight_data, R_e);
 
     auto end_neighbor_search = chrono::high_resolution_clock::now();
 
@@ -203,7 +164,8 @@ int main()
     printf("Neighbor Search Time        : %f second\n\n", neighbor_time_ms/1000);
 
     vector<vector<vector<double>>> LSMPS_eta(num_particle, vector<vector<double>>(9));
-    calc_LSMPS_eta_3D(LSMPS_eta, x, y, z, hx, hy, hz, neighbor, weight_data);
+    // calc_LSMPS_eta_3D(LSMPS_eta, x, y, z, hx, hy, hz, neighbor, weight_data);
+    calc_LSMPS_eta_3D_2(LSMPS_eta, x, y, z, hx, hy, hz, neighbor, weight_data);
 
     auto end_eta = chrono::high_resolution_clock::now();
 
@@ -236,7 +198,27 @@ int main()
 
     int count = 0;
     double t  = 0;
-    double dt = 1e-3;
+    double dt = 2e-3;
+
+    string name = "output/3D External Flux/result/out_" + to_string(count) + ".csv";
+
+    ofstream output1;
+
+    output1.open(name);
+
+    output1 << "x" << "," << "y" << "," << "z" << "," << "qx" << "," << "LSMPS_Conserved\n";
+
+    for (int i = 0; i < num_particle; i++)
+    {
+        if (x[i] >= x_left && x[i] <= x_right && y[i] >= y_bottom && y[i] <= y_top && z[i] >= z_back && z[i] <= z_front)
+        {
+            output1 << x[i] << "," 
+                << y[i] << ","
+                << z[i] << ","
+                << q_x[i] << ","
+                << T[i] << "\n";
+        }
+    }
 
     auto start_loop_segment = chrono::high_resolution_clock::now();
     auto end_loop_segment = chrono::high_resolution_clock::now();
@@ -306,7 +288,7 @@ int main()
             cout << count <<":"<<"\t"<< t << "\t\t Segment time: " << loop_time_ms/1000 << endl;
         }
         
-        if (count == 1 || count % 500 == 0)
+        if (count % 500 == 0)
         {
             string name = "output/3D External Flux/result/out_" + to_string(count) + ".csv";
 

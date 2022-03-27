@@ -121,6 +121,18 @@ void calc_LSMPS_eta_3D_2(vector<vector<vector<double>>> &LSMPS_eta,
     double hyi = hy[0];
     double hzi = hz[0];
 
+    MatrixXd Hrs = MatrixXd::Zero(9,9);
+        
+    Hrs(0,0) = pow(hxi,-1);
+    Hrs(1,1) = pow(hyi,-1);
+    Hrs(2,2) = pow(hzi,-1);
+    Hrs(3,3) = pow(hxi*hyi,-1);
+    Hrs(4,4) = pow(hxi*hzi,-1);
+    Hrs(5,5) = pow(hyi*hzi,-1);
+    Hrs(6,6) = pow(hxi,-2)*2.0;
+    Hrs(7,7) = pow(hyi,-2)*2.0;
+    Hrs(8,8) = pow(hzi,-2)*2.0;
+
     for (int i = 0; i < no_particle; i++)
     {
         int no_neighbor = neighbor[i].size();
@@ -131,19 +143,6 @@ void calc_LSMPS_eta_3D_2(vector<vector<vector<double>>> &LSMPS_eta,
         // double hxi = hx[i];
         // double hyi = hy[i];
         // double hzi = hz[i];
-
-        MatrixXd Hrs = MatrixXd::Zero(9,9);
-        
-        Hrs(0,0) = pow(hxi,-1);
-        Hrs(1,1) = pow(hyi,-1);
-        Hrs(2,2) = pow(hzi,-1);
-        Hrs(3,3) = pow(hxi*hyi,-1);
-        Hrs(4,4) = pow(hxi*hzi,-1);
-        Hrs(5,5) = pow(hyi*hzi,-1);
-        Hrs(6,6) = pow(hxi,-2)*2.0;
-        Hrs(7,7) = pow(hyi,-2)*2.0;
-        Hrs(8,8) = pow(hzi,-2)*2.0;
-
 
         MatrixXd M = MatrixXd::Zero(9,9);
         MatrixXd P = MatrixXd::Zero(9,1);
