@@ -11,6 +11,8 @@ void brute_force(vector<double> x_w,
                  vector<vector<double>> &weight,
                  double R_e)
 {
+    #pragma omp parallel for
+    
     int no_particle = x_w.size();
 
     double xi, yi;
@@ -20,7 +22,6 @@ void brute_force(vector<double> x_w,
     vector<vector<int>> neighbor_temp(no_particle);
     vector<vector<double>> weight_temp(no_particle);
 
-    #pragma omp parallel for
     for (int i = 0; i < no_particle-1; i++)
     {
         for (int j = i+1; j < no_particle; j++)
@@ -64,6 +65,8 @@ void brute_force_3D(vector<double> x_w,
                     vector<vector<double>> &weight,
                     double R_e)
 {
+    #pragma omp parallel for
+    
     int no_particle = x_w.size();
 
     double xi, yi, zi;
@@ -73,7 +76,6 @@ void brute_force_3D(vector<double> x_w,
     vector<vector<int>> neighbor_temp(no_particle);
     vector<vector<double>> weight_temp(no_particle);
 
-    #pragma omp parallel for
     for (int i = 0; i < no_particle-1; i++)
     {
         for (int j = i+1; j < no_particle; j++)
@@ -118,6 +120,8 @@ void brute_force_2(vector<double> x_w,
                  vector<vector<double>> &weight,
                  double R_e)
 {
+    #pragma omp parallel for
+    
     int no_particle = x_w.size();
 
     double xi, yi;
@@ -129,7 +133,6 @@ void brute_force_2(vector<double> x_w,
     vector<vector<int>> neighbor_temp(no_particle);
     vector<vector<double>> weight_temp(no_particle);
 
-    #pragma omp parallel for
     for (int i = 0; i < no_particle-1; i++)
     {
         for (int j = i+1; j < no_particle; j++)
@@ -173,6 +176,8 @@ void brute_force_3D_2(vector<double> x_w,
                     vector<vector<double>> &weight,
                     double R_e)
 {
+    #pragma omp parallel for
+    
     int no_particle = x_w.size();
 
     double xi, yi, zi;
@@ -184,7 +189,6 @@ void brute_force_3D_2(vector<double> x_w,
     vector<vector<int>> neighbor_temp(no_particle);
     vector<vector<double>> weight_temp(no_particle);
 
-    #pragma omp parallel for
     for (int i = 0; i < no_particle-1; i++)
     {
         for (int j = i+1; j < no_particle; j++)
