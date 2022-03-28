@@ -43,7 +43,7 @@ int main()
     int ny = 10;
     int nz = 10;
 
-    double ratio = 0.8;
+    double ratio = 0.7;
 
     // int nx1 = x_change*nx;
     // int nx2 = (1-x_change)*nx*ratio;
@@ -53,11 +53,11 @@ int main()
     // int nz2 = nz*ratio;
 
     int nx1 = 40;
-    int nx2 = 48;
+    int nx2 = 42;
     int ny1 = 10;
-    int ny2 = 8;
+    int ny2 = 7;
     int nz1 = 10;
-    int nz2 = 8;
+    int nz2 = 7;
 
     // nx += 1;
     // ny += 1;
@@ -79,9 +79,9 @@ int main()
     double dy1 = 0.001;
     double dz1 = 0.001;
 
-    double dx2 = 0.00125;
-    double dy2 = 0.00125;
-    double dz2 = 0.00125;
+    double dx2 = 0.001428571;
+    double dy2 = 0.001428571;
+    double dz2 = 0.001428571;
 
     vector<double> x, y, z, hx, hy, hz;
     vector<double> k, cp, rho;
