@@ -55,16 +55,16 @@ int main()
     // int nz2 = nz*ratio;
 
     int nx1 = 40;
-    int nx2 = 24;
-    int nx3 = 18;
+    int nx2 = 21;
+    int nx3 = 15;
 
     int ny1 = 10;
-    int ny2 = 8;
-    int ny3 = 6;
+    int ny2 = 7;
+    int ny3 = 5;
 
     int nz1 = 10;
-    int nz2 = 8;
-    int nz3 = 6;
+    int nz2 = 7;
+    int nz3 = 5;
 
     // nx += 1;
     // ny += 1;
