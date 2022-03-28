@@ -17,7 +17,7 @@ using namespace std;
 
 int main()
 {
-    auto start_time = chrono::high_resolution_clock::now();   
+    auto start_time = chrono::high_resolution_clock::now();
 
     double x_left   = 0;
     double x_right  = 0.1;
@@ -26,9 +26,11 @@ int main()
     double z_front  = 0.01;
     double z_back   = 0;
 
-    double x_change = 0.4;
+    double x_change  = 0.4;
+    double x_change2 = 0.7;
 
-    double x_multires = x_left+x_change*(x_right-x_left);
+    double x_multires  = x_left+x_change*(x_right-x_left);
+    double x_multires2 = x_left+x_change2*(x_right-x_left);
 
     double eax = 1;
     double eay = 1;
@@ -43,7 +45,7 @@ int main()
     int ny = 10;
     int nz = 10;
 
-    double ratio = 0.7;
+    // double ratio = 0.8;
 
     // int nx1 = x_change*nx;
     // int nx2 = (1-x_change)*nx*ratio;
@@ -53,11 +55,16 @@ int main()
     // int nz2 = nz*ratio;
 
     int nx1 = 40;
-    int nx2 = 42;
+    int nx2 = 24;
+    int nx3 = 18;
+
     int ny1 = 10;
-    int ny2 = 7;
+    int ny2 = 8;
+    int ny3 = 6;
+
     int nz1 = 10;
-    int nz2 = 7;
+    int nz2 = 8;
+    int nz3 = 6;
 
     // nx += 1;
     // ny += 1;
@@ -79,9 +86,13 @@ int main()
     double dy1 = 0.001;
     double dz1 = 0.001;
 
-    double dx2 = 0.001428571;
-    double dy2 = 0.001428571;
-    double dz2 = 0.001428571;
+    double dx2 = 0.0014286;
+    double dy2 = 0.0014286;
+    double dz2 = 0.0014286;
+
+    double dx3 = 0.002;
+    double dy3 = 0.002;
+    double dz3 = 0.002;
 
     vector<double> x, y, z, hx, hy, hz;
     vector<double> k, cp, rho;
@@ -152,7 +163,7 @@ int main()
 
     x_par = x_par + 0.5*dx1 - 0.5*dx2;
 
-    for (int i = 0; i < nx2 + n_dummy - 0.5; i++)
+    for (int i = 0; i < nx2; i++)
     {
         x_par += dx2;
         y_par = y_bottom-n_dummy*dy2;
@@ -172,6 +183,54 @@ int main()
                 hx.push_back(dx2);
                 hy.push_back(dy2);
                 hz.push_back(dz2);
+
+                q_x.push_back(0);
+                q_y.push_back(0);
+                q_z.push_back(0);
+                
+
+                k.push_back(200);
+                cp.push_back(900);
+                rho.push_back(2700);
+
+                x_w.push_back(eay*eaz*x_par);
+                y_w.push_back(eax*eaz*y_par);
+                z_w.push_back(eax*eay*z_par);
+
+                if ((x_par < x_left) || (x_par > x_right) || (y_par < y_bottom) || (y_par > y_top) || (z_par < z_back) || (z_par > z_front))
+                {
+                    is_dummy.push_back(1);
+                }
+                else
+                {
+                    is_dummy.push_back(0);
+                }
+            }
+        }
+    }
+
+    x_par = x_par + 0.5*dx2 - 0.5*dx3;
+
+    for (int i = 0; i < nx3 + n_dummy - 0.5; i++)
+    {
+        x_par += dx3;
+        y_par = y_bottom-n_dummy*dy3;
+
+        for (int j = 0; j < ny3 + 2*n_dummy - 1; j++)
+        {
+            y_par += dy3;
+            z_par = z_back-n_dummy*dz3;
+
+            for (int m = 0; m < nz3 + 2*n_dummy - 1; m++)
+            {
+                z_par += dz3;
+                
+                x.push_back(x_par);
+                y.push_back(y_par);
+                z.push_back(z_par);
+                hx.push_back(dx3);
+                hy.push_back(dy3);
+                hz.push_back(dz3);
 
                 q_x.push_back(0);
                 q_y.push_back(0);
@@ -282,8 +341,8 @@ int main()
     double t  = 0;
     double dt = 2e-3;
     
-    string name1 = "output/3D External Flux/Multires/result 29/big/out_" + to_string(count) + ".csv";
-    string name2 = "output/3D External Flux/Multires/result 29/small/out_" + to_string(count) + ".csv";
+    string name1 = "output/3D External Flux/Multires/result/big/out_" + to_string(count) + ".csv";
+    string name2 = "output/3D External Flux/Multires/result/small/out_" + to_string(count) + ".csv";
 
     ofstream output1, output2;
 
@@ -387,8 +446,8 @@ int main()
         
         if (count % 500 == 0)
         {
-            string name1 = "output/3D External Flux/Multires/result 29/big/out_" + to_string(count) + ".csv";
-            string name2 = "output/3D External Flux/Multires/result 29/small/out_" + to_string(count) + ".csv";
+            string name1 = "output/3D External Flux/Multires/result/big/out_" + to_string(count) + ".csv";
+            string name2 = "output/3D External Flux/Multires/result/small/out_" + to_string(count) + ".csv";
 
             ofstream output1, output2;
 
@@ -436,7 +495,7 @@ int main()
     printf("Calculation Time            : %f second\n\n", calc_time_ms/1000);
 
     ofstream output3;
-    output3.open("output/3D External Flux/Multires/result 29/summary.csv");
+    output3.open("output/3D External Flux/Multires/result/summary.csv");
     
     output3  << "Number of Particle," << x.size() <<"\n"
             << "Neighbor Search Time," << neighbor_time_ms/1000 << "\n"
