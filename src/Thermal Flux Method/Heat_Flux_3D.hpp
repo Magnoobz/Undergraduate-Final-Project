@@ -26,7 +26,7 @@ void calc_kdeltaT_3D(vector<double> x,
     vector<double> temp_y(no_particle);
     vector<double> temp_z(no_particle);
 
-    #pragma omp parallel for num_threads(30)
+    #pragma omp parallel for num_threads(50)
     for (int i = 0; i < no_particle; i++)
     {
         if (is_dummy[i] == 1)
@@ -92,7 +92,7 @@ void calc_LSMPS_like_3D(vector<double> x,
     vector<vector<double>> temp_y(no_particle);
     vector<vector<double>> temp_z(no_particle);
 
-    #pragma omp parallel for num_threads(30)
+    #pragma omp parallel for num_threads(50)
     for (int i = 0; i < no_particle; i++)
     {
         if (is_dummy[i] == 0)
@@ -138,7 +138,7 @@ void calc_MPS_like_value_3D(vector<double> x,
 
     vector<vector<double>> temp(no_particle);
 
-    #pragma omp parallel for num_threads(30)
+    #pragma omp parallel for num_threads(50)
     for (int i = 0; i < no_particle; i++)
     {
         if (is_dummy[i] == 1)
@@ -195,7 +195,7 @@ void calc_MPS_like_3D(vector<double> x,
     vector<vector<double>> temp_y(no_particle);
     vector<vector<double>> temp_z(no_particle);
 
-    #pragma omp parallel for num_threads(30)
+    #pragma omp parallel for num_threads(50)
     for (int i = 0; i < no_particle; i++)
     {
         if (is_dummy[i] == 1)
@@ -260,7 +260,7 @@ void calc_hybrid_3D(vector<double> x,
     vector<vector<double>> temp_y(no_particle);
     vector<vector<double>> temp_z(no_particle);
 
-    #pragma omp parallel for num_threads(30)
+    #pragma omp parallel for num_threads(50)
     for (int i = 0; i < no_particle; i++)
     {
         if(is_dummy[i] == 1)

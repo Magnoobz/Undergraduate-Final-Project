@@ -16,7 +16,7 @@ void External_Heat_Flux_3D(vector<double> q_x,
 
     vector<double> temp(no_particle);
 
-    #pragma omp parallel for num_threads(30)
+    #pragma omp parallel for num_threads(50)
     for (int i = 0; i < no_particle; i++)
     {
         temp[i] = hx[i]*hy[i]*q_z[i] + hx[i]*hz[i]*q_y[i]  + hy[i]*hz[i]*q_x[i];

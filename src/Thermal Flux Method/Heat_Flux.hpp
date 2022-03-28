@@ -22,7 +22,7 @@ void calc_kdeltaT(vector<double> x,
     vector<double> temp_x(no_particle);
     vector<double> temp_y(no_particle);
 
-    #pragma omp parallel for num_threads(30)
+    #pragma omp parallel for num_threads(50)
     for (int i = 0; i < no_particle; i++)
     {
         if (is_dummy[i] == 1)
@@ -79,7 +79,7 @@ void calc_LSMPS_like(vector<double> x,
     vector<vector<double>> temp_x(no_particle);
     vector<vector<double>> temp_y(no_particle);
 
-    #pragma omp parallel for num_threads(30)
+    #pragma omp parallel for num_threads(50)
     for (int i = 0; i < no_particle; i++)
     {
         if (is_dummy[i] == 0)
@@ -121,7 +121,7 @@ void calc_MPS_like_value(vector<double> x,
 
     vector<vector<double>> temp(no_particle);
 
-    #pragma omp parallel for num_threads(30)
+    #pragma omp parallel for num_threads(50)
     for (int i = 0; i < no_particle; i++)
     {
         if (is_dummy[i] == 1)
@@ -173,7 +173,7 @@ void calc_MPS_like(vector<double> x,
     vector<vector<double>> temp_x(no_particle);
     vector<vector<double>> temp_y(no_particle);
 
-    #pragma omp parallel for num_threads(30)
+    #pragma omp parallel for num_threads(50)
     for (int i = 0; i < no_particle; i++)
     {
         if (is_dummy[i] == 1)
@@ -229,7 +229,7 @@ void calc_hybrid(vector<double> x,
     vector<vector<double>> temp_x(no_particle);
     vector<vector<double>> temp_y(no_particle);
 
-    #pragma omp parallel for num_threads(30)
+    #pragma omp parallel for num_threads(50)
     for (int i = 0; i < no_particle; i++)
     {
         if(is_dummy[i] == 1)
