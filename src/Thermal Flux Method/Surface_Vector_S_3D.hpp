@@ -13,10 +13,9 @@ void calculate_Sij_3D(vector<vector<vector<double>>> LSMPS_Eta,
                       vector<double> hz,
                       vector<vector<int>> neighbor)
 {
-    #pragma omp parallel for
-    
     int no_particle = hx.size();
 
+    #pragma omp parallel for
     for (int i = 0; i < no_particle; i++)
     {
         int no_neighbor = neighbor[i].size();
@@ -42,14 +41,13 @@ void calculate_Bi_3D(vector<vector<double>> Sij_x,
                      vector<double> &Bi_y,
                      vector<double> &Bi_z)
 {
-    #pragma omp parallel for
-    
     int no_particle = x.size();
 
     vector<double> temp_x(no_particle);
     vector<double> temp_y(no_particle);
     vector<double> temp_z(no_particle);
 
+    #pragma omp parallel for
     for (int i = 0; i < no_particle; i++)
     {
         if (is_dummy[i] == 1)
@@ -82,11 +80,9 @@ void calculate_Sij_Star_3D(vector<vector<double>> Sij_x,
                            vector<int> is_dummy,
                            vector<vector<int>> neighbor)
 {
-    
-    #pragma omp parallel for
-    
     int no_particle = x.size();
 
+    #pragma omp parallel for
     for (int i = 0; i < no_particle; i++)
     {
         if (is_dummy[i] == 1)

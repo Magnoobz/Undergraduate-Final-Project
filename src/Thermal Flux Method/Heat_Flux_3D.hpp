@@ -16,8 +16,6 @@ void calc_kdeltaT_3D(vector<double> x,
                      vector<double> &kdeltaT_y,
                      vector<double> &kdeltaT_z)
 {
-    #pragma omp parallel for
-    
     int no_particle = x.size();
 
     vector<vector<double>> eta_x(no_particle);
@@ -28,6 +26,7 @@ void calc_kdeltaT_3D(vector<double> x,
     vector<double> temp_y(no_particle);
     vector<double> temp_z(no_particle);
 
+    #pragma omp parallel for
     for (int i = 0; i < no_particle; i++)
     {
         if (is_dummy[i] == 1)
@@ -87,14 +86,13 @@ void calc_LSMPS_like_3D(vector<double> x,
                         vector<vector<double>> &kdeltaT_ij_y,
                         vector<vector<double>> &kdeltaT_ij_z)
 {
-    #pragma omp parallel for
-    
     int no_particle = x.size();
 
     vector<vector<double>> temp_x(no_particle);
     vector<vector<double>> temp_y(no_particle);
     vector<vector<double>> temp_z(no_particle);
 
+    #pragma omp parallel for
     for (int i = 0; i < no_particle; i++)
     {
         if (is_dummy[i] == 0)
@@ -136,12 +134,11 @@ void calc_MPS_like_value_3D(vector<double> x,
                             vector<vector<int>> neighbor,
                             vector<vector<double>> &kdeltaT_ij)
 {
-    #pragma omp parallel for
-    
     int no_particle = x.size();
 
     vector<vector<double>> temp(no_particle);
 
+    #pragma omp parallel for
     for (int i = 0; i < no_particle; i++)
     {
         if (is_dummy[i] == 1)
@@ -192,14 +189,13 @@ void calc_MPS_like_3D(vector<double> x,
                       vector<vector<double>> &kdeltaT_ij_y,
                       vector<vector<double>> &kdeltaT_ij_z)
 {
-    #pragma omp parallel for
-    
     int no_particle = x.size();
 
     vector<vector<double>> temp_x(no_particle);
     vector<vector<double>> temp_y(no_particle);
     vector<vector<double>> temp_z(no_particle);
 
+    #pragma omp parallel for
     for (int i = 0; i < no_particle; i++)
     {
         if (is_dummy[i] == 1)
@@ -257,8 +253,6 @@ void calc_hybrid_3D(vector<double> x,
                     vector<vector<double>> &kdeltaT_ij_y,
                     vector<vector<double>> &kdeltaT_ij_z)
 {
-    #pragma omp parallel for
-    
     int no_particle = x.size();
 
     vector<vector<double>> temp(no_particle);
@@ -266,6 +260,7 @@ void calc_hybrid_3D(vector<double> x,
     vector<vector<double>> temp_y(no_particle);
     vector<vector<double>> temp_z(no_particle);
 
+    #pragma omp parallel for
     for (int i = 0; i < no_particle; i++)
     {
         if(is_dummy[i] == 1)
