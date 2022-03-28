@@ -13,7 +13,7 @@ void calculate_Sij(vector<vector<vector<double>>> LSMPS_Eta,
 {
     int no_particle = hx.size();
 
-    #pragma omp parallel for
+    #pragma omp parallel for num_threads(12)
     for (int i = 0; i < no_particle; i++)
     {
         int no_neighbor = neighbor[i].size();
@@ -41,7 +41,7 @@ void calculate_Bi(vector<vector<double>> Sij_x,
     vector<double> temp_x(no_particle);
     vector<double> temp_y(no_particle);
 
-    #pragma omp parallel for
+    #pragma omp parallel for num_threads(12)
     for (int i = 0; i < no_particle; i++)
     {
         if (is_dummy[i] == 1)
@@ -72,7 +72,7 @@ void calculate_Sij_Star(vector<vector<double>> Sij_x,
 {
     int no_particle = x.size();
 
-    #pragma omp parallel for
+    #pragma omp parallel for num_threads(12)
     for (int i = 0; i < no_particle; i++)
     {
         if (is_dummy[i] == 1)
@@ -114,7 +114,7 @@ void calculate_Sij_Star_2(vector<vector<double>> Sij_x,
 {
     int no_particle = x.size();
 
-    #pragma omp parallel for
+    #pragma omp parallel for num_threads(12)
     for (int i = 0; i < no_particle; i++)
     {
         if (is_dummy[i] == 1)

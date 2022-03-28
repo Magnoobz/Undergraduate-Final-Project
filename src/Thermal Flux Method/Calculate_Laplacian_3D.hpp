@@ -29,7 +29,7 @@ void calc_Laplacian_3D(vector<double> k,
 
     vector<double> temp(no_particle);
 
-    #pragma omp parallel for
+    #pragma omp parallel for num_threads(12)
     for (int i = 0; i < no_particle; i++)
     {
         if(is_dummy[i] == 1)
@@ -83,7 +83,7 @@ void calc_dTdt_3D(vector<double> cp,
 
     vector<double> temp(no_particle);
 
-    #pragma omp parallel for
+    #pragma omp parallel for num_threads(12)
     for (int i = 0; i < no_particle; i++)
     {
         if(is_dummy[i] == 1)
@@ -128,7 +128,7 @@ void calc_Laplacian_From_Eta_3D(vector<vector<vector<double>>> Eta_LSMPS,
 
     vector<double> temp(no_particle);
 
-    #pragma omp parallel for
+    #pragma omp parallel for num_threads(12)
     for (int i = 0; i < no_particle; i++)
     {
         if(is_dummy[i] == 1)
