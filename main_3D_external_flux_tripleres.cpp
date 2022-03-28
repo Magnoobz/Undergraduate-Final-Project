@@ -516,7 +516,7 @@ int main()
     printf("Sij Star Time               : %f second\n", sijstar_time_ms/1000);
     printf("Calculation Time            : %f second\n\n", calc_time_ms/1000);
 
-    ofstream output3;
+
     output3.open("output/3D External Flux/Multires/result 86/summary.csv");
     
     output3  << "Number of Particle," << x.size() <<"\n"
