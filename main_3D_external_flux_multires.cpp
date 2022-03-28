@@ -19,7 +19,7 @@ int main()
 {
     auto start_time = chrono::high_resolution_clock::now();
 
-    omp_set_num_threads(10);    
+    omp_set_num_threads(20);    
 
     double x_left   = 0;
     double x_right  = 0.1;
