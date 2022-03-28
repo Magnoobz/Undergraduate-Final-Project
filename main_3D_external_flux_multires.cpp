@@ -448,20 +448,31 @@ int main()
         {
             string name1 = "output/3D External Flux/Multires/result/big/out_" + to_string(count) + ".csv";
             string name2 = "output/3D External Flux/Multires/result/small/out_" + to_string(count) + ".csv";
+            string name3 = "output/3D External Flux/Multires/result/smaller/out_" + to_string(count) + ".csv";
 
-            ofstream output1, output2;
+            ofstream output1, output2, output3;
 
             output1.open(name1);
             output2.open(name2);
+            output3.open(name3);
 
             output1 << "x" << "," << "y" << "," << "z" << "," << "qx" << "," << "LSMPS_Conserved\n";
             output2 << "x" << "," << "y" << "," << "z" << "," << "qx" << "," << "LSMPS_Conserved\n";
+            output3 << "x" << "," << "y" << "," << "z" << "," << "qx" << "," << "LSMPS_Conserved\n";
 
             for (int i = 0; i < num_particle; i++)
             {
                 if (x[i] >= x_left && x[i] <= x_right && y[i] >= y_bottom && y[i] <= y_top && z[i] >= z_back && z[i] <= z_front)
                 {
                     if (hx[i] == dx1)
+                    {
+                        output3 << x[i] << "," 
+                            << y[i] << ","
+                            << z[i] << ","
+                            << q_x[i] << ","
+                            << T[i] << "\n";
+                    }
+                    else if (hx[i] == dx2)
                     {
                         output2 << x[i] << "," 
                             << y[i] << ","
