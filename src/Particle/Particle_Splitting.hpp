@@ -16,7 +16,7 @@ void Particle_Splitting(vector<int> split_index,
     vector<double> x_temp, y_temp, h_temp; 
     vector<int> not_moving_temp;
 
-    #pragma omp parallel for num_threads(50)
+    #pragma omp parallel for
     for (int i = 0; i < no_particle; i++)
     {
         if (not_moving[i] == 1)

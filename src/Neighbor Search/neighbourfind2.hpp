@@ -160,7 +160,7 @@ void assign_grid   (vector<int>& cellidoutput,
     vector<int> cellid(part_num,-2);
     vector<vector<int>> cell_particle(Ncell);
     vector<int> cell_particle_num(Ncell);
-    #pragma omp parallel for num_threads(50)
+    #pragma omp parallel for
     for (int k = 0; k < part_num; k++)
     {
         for (int i = 0; i < Ncell; i++)

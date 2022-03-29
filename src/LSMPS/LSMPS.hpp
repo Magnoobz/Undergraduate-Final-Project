@@ -14,7 +14,7 @@ void calc_LSMPS_eta(vector<vector<vector<double>>> &LSMPS_eta,
 {    
     int no_particle = x.size();
 
-    #pragma omp parallel for num_threads(50)
+    #pragma omp parallel for
     for (int i = 0; i < no_particle; i++)
     {
         int no_neighbor = neighbor[i].size();
@@ -106,7 +106,7 @@ void calc_LSMPS_eta_2(vector<vector<vector<double>>> &LSMPS_eta,
     Hrs(3,3) = pow(hxi*hyi,-1);
     Hrs(4,4) = pow(hyi,-2)*2.0;
 
-    #pragma omp parallel for num_threads(50)
+    #pragma omp parallel for
     for (int i = 0; i < no_particle; i++)
     {
         int no_neighbor = neighbor[i].size();
