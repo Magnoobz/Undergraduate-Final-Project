@@ -517,9 +517,10 @@ int main()
     printf("Calculation Time            : %f second\n\n", calc_time_ms/1000);
 
 
-    output3.open("output/3D External Flux/Multires/result 86/summary.csv");
+    ofstream output4;
+    output4.open("output/3D External Flux/Multires/result 86/summary.csv");
     
-    output3  << "Number of Particle," << x.size() <<"\n"
+    output4  << "Number of Particle," << x.size() <<"\n"
             << "Neighbor Search Time," << neighbor_time_ms/1000 << "\n"
             << "Calc Eta Time," << eta_time_ms/1000 << "\n"
             << "Sij Time," << sij_time_ms/1000 << "\n"
