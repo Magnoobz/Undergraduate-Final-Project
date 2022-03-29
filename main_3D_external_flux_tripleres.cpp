@@ -339,7 +339,7 @@ int main()
 
     int count = 0;
     double t  = 0;
-    double dt = 2e-3;
+    double dt = 5e-3;
     
     string name1 = "output/3D External Flux/Multires/result 86/big/out_" + to_string(count) + ".csv";
     string name2 = "output/3D External Flux/Multires/result 86/small/out_" + to_string(count) + ".csv";
