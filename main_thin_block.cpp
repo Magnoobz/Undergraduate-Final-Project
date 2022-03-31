@@ -192,7 +192,7 @@ int main()
     double t  = 0;
     double dt = 1e-2;
 
-    string name = "output/Thin Block/result/out_" + to_string(count) + ".csv";
+    string name = "output/Thin Block/result2/out_" + to_string(count) + ".csv";
 
     ofstream output1;
 
@@ -293,7 +293,7 @@ int main()
         
         if (count % 10 == 0)
         {
-            string name = "output/Thin Block/result/out_" + to_string(count) + ".csv";
+            string name = "output/Thin Block/result2/out_" + to_string(count) + ".csv";
 
             ofstream output1;
 
@@ -327,7 +327,7 @@ int main()
     printf("Calculation Time            : %f second\n\n", calc_time_ms/1000);
 
     ofstream output2;
-    output2.open("output/Thin Block/result/summary.csv");
+    output2.open("output/Thin Block/result2/summary.csv");
     
     output2  << "Number of Particle," << x.size() <<"\n"
             << "Neighbor Search Time," << neighbor_time_ms/1000 << "\n"
