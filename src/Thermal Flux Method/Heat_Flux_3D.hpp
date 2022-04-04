@@ -26,7 +26,7 @@ void calc_kdeltaT_3D(vector<double> x,
     vector<double> temp_y(no_particle);
     vector<double> temp_z(no_particle);
 
-    #pragma omp parallel for
+    // #pragma omp parallel for
     for (int i = 0; i < no_particle; i++)
     {
         if (is_dummy[i] == 1)
@@ -46,6 +46,7 @@ void calc_kdeltaT_3D(vector<double> x,
 
         int no_neighbor = neighbor[i].size();
 
+        #pragma omp parallel for
         for (int j = 0; j < no_neighbor; j++)
         {
             int idxj = neighbor[i][j];
@@ -92,7 +93,7 @@ void calc_LSMPS_like_3D(vector<double> x,
     vector<vector<double>> temp_y(no_particle);
     vector<vector<double>> temp_z(no_particle);
 
-    #pragma omp parallel for
+    // #pragma omp parallel for
     for (int i = 0; i < no_particle; i++)
     {
         if (is_dummy[i] == 0)
@@ -101,22 +102,26 @@ void calc_LSMPS_like_3D(vector<double> x,
         }
         
         int no_neighbor = neighbor[i].size();
+        temp_x[i].resize(no_neighbor);
+        temp_y[i].resize(no_neighbor);
+        temp_z[i].resize(no_neighbor);
 
+        #pragma omp parallel for
         for (int j = 0; j < no_neighbor; j++)
         {
             int idxj = neighbor[i][j];
 
             if(is_dummy[idxj] == 1)
             {
-                temp_x[i].push_back(0.5*kdeltaT_x[i]);
-                temp_y[i].push_back(0.5*kdeltaT_y[i]);
-                temp_z[i].push_back(0.5*kdeltaT_z[i]);
+                temp_x[i][j] = (0.5*kdeltaT_x[i]);
+                temp_y[i][j] = (0.5*kdeltaT_y[i]);
+                temp_z[i][j] = (0.5*kdeltaT_z[i]);
                 continue;
             }
 
-            temp_x[i].push_back(0.5*(kdeltaT_x[i]+kdeltaT_x[idxj]));
-            temp_y[i].push_back(0.5*(kdeltaT_y[i]+kdeltaT_y[idxj]));
-            temp_z[i].push_back(0.5*(kdeltaT_z[i]+kdeltaT_z[idxj]));
+            temp_x[i][j] = (0.5*(kdeltaT_x[i]+kdeltaT_x[idxj]));
+            temp_y[i][j] = (0.5*(kdeltaT_y[i]+kdeltaT_y[idxj]));
+            temp_z[i][j] = (0.5*(kdeltaT_z[i]+kdeltaT_z[idxj]));
         }
     }
 
@@ -138,15 +143,13 @@ void calc_MPS_like_value_3D(vector<double> x,
 
     vector<vector<double>> temp(no_particle);
 
-    #pragma omp parallel for
+    // #pragma omp parallel for
     for (int i = 0; i < no_particle; i++)
     {
         if (is_dummy[i] == 1)
         {
             continue;
         }
-        
-        int no_neighbor = neighbor[i].size();
 
         double xi = x[i];
         double yi = y[i];
@@ -154,13 +157,17 @@ void calc_MPS_like_value_3D(vector<double> x,
         double ki = k[i];
         double Ti = T[i];
 
+        int no_neighbor = neighbor[i].size();
+        temp[i].resize(no_neighbor);
+
+        #pragma omp parallel for
         for (int j = 0; j < no_neighbor; j++)
         {
             int idxj = neighbor[i][j];
 
             if (is_dummy[idxj] == 1)
             {
-                temp[i].push_back(0);
+                temp[i][j] = (0);
                 continue;
             }
 
@@ -172,7 +179,7 @@ void calc_MPS_like_value_3D(vector<double> x,
 
             double dist = sqrt(pow(xj-xi,2)+pow(yj-yi,2)+pow(zj-zi,2));
 
-            temp[i].push_back(0.5*(ki+kj)*(Tj-Ti)/dist);
+            temp[i][j] = (0.5*(ki+kj)*(Tj-Ti)/dist);
         }
     }
 
@@ -195,7 +202,7 @@ void calc_MPS_like_3D(vector<double> x,
     vector<vector<double>> temp_y(no_particle);
     vector<vector<double>> temp_z(no_particle);
 
-    #pragma omp parallel for
+    // #pragma omp parallel for
     for (int i = 0; i < no_particle; i++)
     {
         if (is_dummy[i] == 1)
@@ -204,20 +211,24 @@ void calc_MPS_like_3D(vector<double> x,
         }
         
         int no_neighbor = neighbor[i].size();
+        temp_x[i].resize(no_neighbor);
+        temp_y[i].resize(no_neighbor);
+        temp_z[i].resize(no_neighbor);
 
         double xi = x[i];
         double yi = y[i];
         double zi = z[i];
 
+        #pragma omp parallel for
         for (int j = 0; j < no_neighbor; j++)
         {
             int idxj = neighbor[i][j];
 
             if(is_dummy[idxj] == 1)
             {
-                temp_x[i].push_back(0);
-                temp_y[i].push_back(0);
-                temp_z[i].push_back(0);
+                temp_x[i][j] = (0);
+                temp_y[i][j] = (0);
+                temp_z[i][j] = (0);
             }
 
             double xj = x[idxj];
@@ -228,9 +239,9 @@ void calc_MPS_like_3D(vector<double> x,
 
             double dist = sqrt(pow(xj-xi,2)+pow(yj-yi,2)+pow(zj-zi,2));
 
-            temp_x[i].push_back(value*(xj-xi)/dist);
-            temp_y[i].push_back(value*(yj-yi)/dist);
-            temp_z[i].push_back(value*(zj-zi)/dist);
+            temp_x[i][j] = (value*(xj-xi)/dist);
+            temp_y[i][j] = (value*(yj-yi)/dist);
+            temp_z[i][j] = (value*(zj-zi)/dist);
         }
     }
 
@@ -260,7 +271,7 @@ void calc_hybrid_3D(vector<double> x,
     vector<vector<double>> temp_y(no_particle);
     vector<vector<double>> temp_z(no_particle);
 
-    #pragma omp parallel for
+    // #pragma omp parallel for
     for (int i = 0; i < no_particle; i++)
     {
         if(is_dummy[i] == 1)
@@ -269,6 +280,10 @@ void calc_hybrid_3D(vector<double> x,
         }
         
         int no_neighbor = neighbor[i].size();
+        temp[i].resize(no_neighbor);
+        temp_x[i].resize(no_neighbor);
+        temp_y[i].resize(no_neighbor);
+        temp_z[i].resize(no_neighbor);
 
         double xi = x[i];
         double yi = y[i];
@@ -279,16 +294,17 @@ void calc_hybrid_3D(vector<double> x,
 
         double alpha_star;
 
+        #pragma omp parallel for
         for (int j = 0; j < no_neighbor; j++)
         {
             int idxj = neighbor[i][j];
 
             if(is_dummy[idxj] == 1)
             {
-                temp[i].push_back(0.5);
-                temp_x[i].push_back(0.5*kdeltaT_x[i]);
-                temp_y[i].push_back(0.5*kdeltaT_y[i]);
-                temp_z[i].push_back(0.5*kdeltaT_z[i]);
+                temp[i][j] = (0.5);
+                temp_x[i][j] = (0.5*kdeltaT_x[i]);
+                temp_y[i][j] = (0.5*kdeltaT_y[i]);
+                temp_z[i][j] = (0.5*kdeltaT_z[i]);
                 continue;
             }
 
@@ -322,20 +338,20 @@ void calc_hybrid_3D(vector<double> x,
 
             if (alpha_star < 0)
             {
-                temp[i].push_back(0);
+                temp[i][j] = (0);
             }
             else if (alpha_star > 1)
             {
-                temp[i].push_back(1);
+                temp[i][j] = (1);
             }
             else
             {
-                temp[i].push_back(alpha_star);
+                temp[i][j] = (alpha_star);
             }
 
-            temp_x[i].push_back(temp[i][j]*kdeltaT_x[i]+(1-temp[i][j])*kdeltaT_x[idxj]);
-            temp_y[i].push_back(temp[i][j]*kdeltaT_y[i]+(1-temp[i][j])*kdeltaT_y[idxj]);
-            temp_z[i].push_back(temp[i][j]*kdeltaT_z[i]+(1-temp[i][j])*kdeltaT_z[idxj]);
+            temp_x[i][j] = (temp[i][j]*kdeltaT_x[i]+(1-temp[i][j])*kdeltaT_x[idxj]);
+            temp_y[i][j] = (temp[i][j]*kdeltaT_y[i]+(1-temp[i][j])*kdeltaT_y[idxj]);
+            temp_z[i][j] = (temp[i][j]*kdeltaT_z[i]+(1-temp[i][j])*kdeltaT_z[idxj]);
             
         }
     }

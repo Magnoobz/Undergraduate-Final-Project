@@ -10,8 +10,10 @@
 #include "src/Thermal Flux Method/Surface_Vector_S_3D.hpp"
 #include "src/Thermal Flux Method/Calculate_Laplacian_3D.hpp"
 #include "src/Time Integration/time_integration.hpp"
-#include "src/Neighbor Search/Brute_Force.hpp"
 #include "src/External Heat Flux/External_Heat_Flux.hpp"
+
+#include "src/Neighbor Search/Brute_Force.hpp"
+#include "src/Neighbor Search/Spatial_Hash_3D.hpp"
 
 using namespace std;
 
@@ -35,29 +37,17 @@ int main()
     double z_front  = 0.0016;
     double z_back   = 0;
 
-    double eax = 1;
-    double eay = 1;
-    double eaz = 1/12.7;
+    double eax = 12.7;
+    double eay = 12.7;
+    double eaz = 1;
 
-    double x_1 = x_left/eax;     // 0
-    double x_2 = x_right/eax;    // 0.1524
-
-    double y_1 = y_bottom/eay;   // 0
-    double y_2 = y_top/eay;      // 0.1524
-
-    double z_1 = z_back/eaz;     // 0
-    double z_2 = z_front/eaz;    // 0.02032
-
-    int nx = 120;
-    int ny = 120;
-    int nz = 16;
+    int nx = 60;
+    int ny = 60;
+    int nz = 8;
 
     double dx = (x_right-x_left)/(nx);
     double dy = (y_top-y_bottom)/(ny);
     double dz = (z_front-z_back)/(nz);
-
-    double dx_out = 0.005;
-    double dx_in  = 0.008;
 
     vector<double> x, y, z, hx, hy, hz;
     vector<double> k, cp, rho;
@@ -148,7 +138,13 @@ int main()
 
     double R_e = 2.4;
     // brute_force_3D(x_w, y_w, z_w, hx, eay, eaz, neighbor, weight_data, R_e);
-    brute_force_3D_2(x_w, y_w, z_w, hx, eay, eaz, neighbor, weight_data, R_e);
+    // brute_force_3D_2(x_w, y_w, z_w, hx, eay, eaz, neighbor, weight_data, R_e);
+
+    int ncell_x, ncell_y, ncell_z, ncell;
+    vector<vector<vector<vector<int>>>> hash_table;
+    vector<int> gridpos_x, gridpos_y, gridpos_z;
+    hash_grid_3D(x_w, y_w, z_w, hx[0]*R_e*eay*eaz,ncell_x, ncell_y, ncell_z, ncell, hash_table, gridpos_x, gridpos_y, gridpos_z);
+    spatial_hash_neighbor_3D(x_w,y_w, z_w,hx[0]*R_e*eay*eaz,ncell_x, ncell_y, ncell_z,gridpos_x, gridpos_y, gridpos_z, hash_table, neighbor, weight_data);
 
     auto end_neighbor_search = chrono::high_resolution_clock::now();
 
@@ -192,13 +188,13 @@ int main()
     double t  = 0;
     double dt = 1e-2;
 
-    string name = "output/Thin Block/result2/out_" + to_string(count) + ".csv";
+    string name = "output/Thin Block/result/out_" + to_string(count) + ".csv";
 
     ofstream output1;
 
     output1.open(name);
 
-    output1 << "x" << "," << "y" << "," << "z" << "," << "q" << "," << "LSMPS_Conserved\n";
+    output1 << "x" << "," << "y" << "," << "z" << "," << "LSMPS_Conserved\n";
 
     for (int i = 0; i < num_particle; i++)
     {
@@ -207,7 +203,6 @@ int main()
             output1 << x_w[i] << "," 
                 << y_w[i] << ","
                 << z_w[i] << ","
-                << q_x[i] << ","
                 << T[i] << "\n";
         }
     }
@@ -217,7 +212,7 @@ int main()
 
     while (t < 15 /*count < 1*/)
     {
-        if (count % 10 == 0)
+        if (count % 20 == 0)
         {
             start_loop_segment = chrono::high_resolution_clock::now();
         }
@@ -283,7 +278,7 @@ int main()
         t += dt;
         count += 1;
 
-        if (count % 10 == 0)
+        if (count % 20 == 0)
         {
             end_loop_segment = chrono::high_resolution_clock::now();
             double loop_time_ms = std::chrono::duration_cast <std::chrono::milliseconds> (end_loop_segment-start_loop_segment).count();
@@ -291,15 +286,15 @@ int main()
             cout << count <<":"<<"\t"<< t << "\t\t Segment time: " << loop_time_ms/1000 << endl;
         }
         
-        if (count % 10 == 0)
+        if (count % 20 == 0)
         {
-            string name = "output/Thin Block/result2/out_" + to_string(count) + ".csv";
+            string name = "output/Thin Block/result/out_" + to_string(count) + ".csv";
 
             ofstream output1;
 
             output1.open(name);
 
-            output1 << "x" << "," << "y" << "," << "z" << "," << "q" << "," << "LSMPS_Conserved\n";
+            output1 << "x" << "," << "y" << "," << "z" << "," << "LSMPS_Conserved\n";
 
             for (int i = 0; i < num_particle; i++)
             {
@@ -308,7 +303,6 @@ int main()
                     output1 << x_w[i] << "," 
                         << y_w[i] << ","
                         << z_w[i] << ","
-                        << q_z[i] << ","
                         << T[i] << "\n";
                 }
             }
@@ -327,7 +321,7 @@ int main()
     printf("Calculation Time            : %f second\n\n", calc_time_ms/1000);
 
     ofstream output2;
-    output2.open("output/Thin Block/result2/summary.csv");
+    output2.open("output/Thin Block/result/summary.csv");
     
     output2  << "Number of Particle," << x.size() <<"\n"
             << "Neighbor Search Time," << neighbor_time_ms/1000 << "\n"

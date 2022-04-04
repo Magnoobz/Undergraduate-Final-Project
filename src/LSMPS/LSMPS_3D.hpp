@@ -16,7 +16,7 @@ void calc_LSMPS_eta_3D(vector<vector<vector<double>>> &LSMPS_eta,
 {
     int no_particle = x.size();
 
-    #pragma omp parallel for
+    // #pragma omp parallel for
     for (int i = 0; i < no_particle; i++)
     {
         int no_neighbor = neighbor[i].size();
@@ -45,6 +45,7 @@ void calc_LSMPS_eta_3D(vector<vector<vector<double>>> &LSMPS_eta,
         MatrixXd P = MatrixXd::Zero(9,1);
         MatrixXd bi = MatrixXd::Zero(9,no_neighbor);
 
+        #pragma omp parallel for
         for (int j = 0; j < no_neighbor; j++)
         {
             int idxj = neighbor[i][j];
@@ -87,17 +88,24 @@ void calc_LSMPS_eta_3D(vector<vector<vector<double>>> &LSMPS_eta,
         // MatrixXd Minv = M.inverse();
         // MatrixXd LSMPS = Hrs*Minv*bi;
 
+        #pragma omp parallel for
+        for (int j = 0; j < 9; j++)
+        {
+            LSMPS_eta[i][j].resize(no_neighbor);
+        }
+
+        #pragma omp parallel for
         for (int j = 0; j < no_neighbor; j++)
         {
-            LSMPS_eta[i][0].push_back(LSMPS(0,j)); 
-            LSMPS_eta[i][1].push_back(LSMPS(1,j));
-            LSMPS_eta[i][2].push_back(LSMPS(2,j));
-            LSMPS_eta[i][3].push_back(LSMPS(3,j));
-            LSMPS_eta[i][4].push_back(LSMPS(4,j));
-            LSMPS_eta[i][5].push_back(LSMPS(5,j));
-            LSMPS_eta[i][6].push_back(LSMPS(6,j));
-            LSMPS_eta[i][7].push_back(LSMPS(7,j));
-            LSMPS_eta[i][8].push_back(LSMPS(8,j));
+            LSMPS_eta[i][0][j] = (LSMPS(0,j)); 
+            LSMPS_eta[i][1][j] = (LSMPS(1,j));
+            LSMPS_eta[i][2][j] = (LSMPS(2,j));
+            LSMPS_eta[i][3][j] = (LSMPS(3,j));
+            LSMPS_eta[i][4][j] = (LSMPS(4,j));
+            LSMPS_eta[i][5][j] = (LSMPS(5,j));
+            LSMPS_eta[i][6][j] = (LSMPS(6,j));
+            LSMPS_eta[i][7][j] = (LSMPS(7,j));
+            LSMPS_eta[i][8][j] = (LSMPS(8,j));
         }
     }
 }
@@ -130,7 +138,7 @@ void calc_LSMPS_eta_3D_2(vector<vector<vector<double>>> &LSMPS_eta,
     Hrs(7,7) = pow(hyi,-2)*2.0;
     Hrs(8,8) = pow(hzi,-2)*2.0;
 
-    #pragma omp parallel for
+    // #pragma omp parallel for
     for (int i = 0; i < no_particle; i++)
     {
         int no_neighbor = neighbor[i].size();
@@ -146,6 +154,7 @@ void calc_LSMPS_eta_3D_2(vector<vector<vector<double>>> &LSMPS_eta,
         MatrixXd P = MatrixXd::Zero(9,1);
         MatrixXd bi = MatrixXd::Zero(9,no_neighbor);
 
+        #pragma omp parallel for
         for (int j = 0; j < no_neighbor; j++)
         {
             int idxj = neighbor[i][j];
@@ -193,17 +202,24 @@ void calc_LSMPS_eta_3D_2(vector<vector<vector<double>>> &LSMPS_eta,
         // MatrixXd Minv = M.inverse();
         // MatrixXd LSMPS = Hrs*Minv*bi;
 
+        #pragma omp parallel for
+        for (int j = 0; j < 9; j++)
+        {
+            LSMPS_eta[i][j].resize(no_neighbor);
+        }
+
+        #pragma omp parallel for
         for (int j = 0; j < no_neighbor; j++)
         {
-            LSMPS_eta[i][0].push_back(LSMPS(0,j)); 
-            LSMPS_eta[i][1].push_back(LSMPS(1,j));
-            LSMPS_eta[i][2].push_back(LSMPS(2,j));
-            LSMPS_eta[i][3].push_back(LSMPS(3,j));
-            LSMPS_eta[i][4].push_back(LSMPS(4,j));
-            LSMPS_eta[i][5].push_back(LSMPS(5,j));
-            LSMPS_eta[i][6].push_back(LSMPS(6,j));
-            LSMPS_eta[i][7].push_back(LSMPS(7,j));
-            LSMPS_eta[i][8].push_back(LSMPS(8,j));
+            LSMPS_eta[i][0][j] = (LSMPS(0,j)); 
+            LSMPS_eta[i][1][j] = (LSMPS(1,j));
+            LSMPS_eta[i][2][j] = (LSMPS(2,j));
+            LSMPS_eta[i][3][j] = (LSMPS(3,j));
+            LSMPS_eta[i][4][j] = (LSMPS(4,j));
+            LSMPS_eta[i][5][j] = (LSMPS(5,j));
+            LSMPS_eta[i][6][j] = (LSMPS(6,j));
+            LSMPS_eta[i][7][j] = (LSMPS(7,j));
+            LSMPS_eta[i][8][j] = (LSMPS(8,j));
         }
     }
 }
