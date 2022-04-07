@@ -45,44 +45,38 @@ void calc_Ni_3D(vector<double> x,
     vector<vector<double>> temp(no_particle,vector<double>(A));
 
     #pragma omp parallel for
-    for (int i = 0; i < A; i++)
+    for (int i = 0; i < no_particle; i++)
     {
-        for (int j = 0; j < no_particle; j++)
+        int no_neighbor = neighbor[i].size();
+
+        double xi = x[i];
+        double yi = y[i];
+        double zi = z[i];
+        double Li = h[i];
+
+        for (int j = 0; j < A; j++)
         {
-            for (int k = 0; k < no_particle; k++)
+            for (int k = 0; k < no_neighbor; k++)
             {
-                if (k == j)
+                int idxk = neighbor[i][k];
+                
+                double xk = x[idxk];
+                double yk = y[idxk];
+                double zk = z[idxk];
+                double Lk = h[idxk];
+
+                double r_ik = sqrt(pow(xk-xi,2)+pow(yk-yi,2)+pow(zk-zi,2));
+
+                if (Ri_a[i][j] >= r_ik - Lk/2 && Ri_a[i][j] <= r_ik + Lk/2)
                 {
-                    continue;
+                    temp[i][j] += (Ri_a[i][j]-r_ik+Lk/2)*4/3*pow(Lk,2);
                 }
-                else
+                else if (Ri_a[i][j] > r_ik + Lk/2)
                 {
-                    double xj = x[j];
-                    double yj = y[j];
-                    double zj = z[j];
-                    double Lj = h[j];
-
-                    double xk = x[k];
-                    double yk = y[k];
-                    double zk = z[k];
-                    double Lk = h[k];
-
-                    double r_jk = sqrt(pow(xk-xj,2)+pow(yk-yj,2)+pow(zk-zj,2));
-
-                    if (Ri_a[j][i] < r_jk - Lk/2)
-                    {
-                        continue;
-                    }
-                    else if (Ri_a[j][i] >= r_jk - Lk/2 && Ri_a[j][i] <= r_jk + Lk/2)
-                    {
-                        temp[j][i] += (Ri_a[j][i]-r_jk+Lj/2)*Lj;
-                    }
-                    else if (Ri_a[j][i] > r_jk + Lk/2)
-                    {
-                        temp[j][i] += pow(Lj,2);
-                    }
+                    temp[i][j] += 4/3*pow(Lk,3);
                 }
-            }
+                
+            }        
         }
     }
 
@@ -111,7 +105,7 @@ void calc_ci_3D(vector<double> x,
             temp_denum += Ri_a[i][j];
         }
 
-        temp[i] = temp_num/temp_denum/M_PI;
+        temp[i] = temp_num/temp_denum;
     }
 
     ci = temp;

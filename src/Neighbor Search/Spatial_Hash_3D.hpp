@@ -156,3 +156,100 @@ void spatial_hash_neighbor_3D(vector<double> x,
     neighbor = neighbor_temp;
     weight = weight_temp;
 }
+
+void spatial_hash_neighbor_3D_2(vector<double> x,
+                           vector<double> y,
+                           vector<double> z,
+                           vector<double> hx,
+                           double eay,
+                           double eaz,
+                           double R_e,
+                           int ncell_x,
+                           int ncell_y,
+                           int ncell_z,
+                           vector<int> gridpos_x,
+                           vector<int> gridpos_y,
+                           vector<int> gridpos_z,
+                           vector<vector<vector<vector<int>>>> hash_table,
+                           vector<vector<int>> &neighbor,
+                           vector<vector<double>> &weight)
+{
+    int no_particle = x.size();
+
+    vector<vector<int>> neighbor_temp(no_particle);
+    vector<vector<double>> weight_temp(no_particle);
+
+    // # pragma omp parallel for
+    for (int i = 0; i < no_particle; i++)
+    {
+        int pos_x = gridpos_x[i];
+        int pos_y = gridpos_y[i];
+        int pos_z = gridpos_z[i];
+
+        double xi = x[i];
+        double yi = y[i];
+        double zi = z[i];
+        double hi = hx[i]*eay*eaz*R_e;
+
+        for (int j = 0; j < 3; j++)
+        {
+            int gridX = pos_x + j - 1;
+            if (gridX < 0 or gridX >= ncell_x){continue;}
+
+            for (int k = 0; k < 3; k++)
+            {
+                int gridY = pos_y + k - 1;
+                if (gridY < 0 or gridY >= ncell_y){continue;}
+
+                for (int m = 0; m < 3; m++)
+                {
+                    int gridZ = pos_z +m -1;
+                    if (gridZ < 0 or gridZ >= ncell_z){continue;}
+
+                    # pragma omp parallel for
+                    for (int s : hash_table[gridX][gridY][gridZ])
+                    {
+                        if (s == i){continue;}
+
+                        double xj = x[s];
+                        double yj = y[s];
+                        double zj = z[s];
+                        double hj = hx[s]*eay*eaz*R_e;
+
+                        double dist = sqrt(pow(xj-xi,2)+pow(yj-yi,2)+pow(zj-zi,2));
+
+                        if (dist <= 0.5*(hi+hj))
+                        {
+                            neighbor_temp[i].push_back(s);
+                        }
+                    }
+                }
+
+                
+            }
+        }
+
+        sort(neighbor_temp[i].begin(),neighbor_temp[i].end());
+        weight_temp[i].resize(neighbor_temp[i].size());
+
+        int count = 0;
+        
+        # pragma omp parallel for
+        for (int t : neighbor_temp[i])
+        {
+            double xj = x[t];
+            double yj = y[t];
+            double zj = z[t];
+            double hj = hx[t]*eay*eaz*R_e;
+
+            double dist = sqrt(pow(xj-xi,2)+pow(yj-yi,2)+pow(zj-zi,2));
+            double weight = pow(1-dist/(0.5*(hi+hj)),2);
+            weight_temp[i][count] = (weight);
+
+            count++;
+        }
+    }
+
+    neighbor = neighbor_temp;
+    weight = weight_temp;
+}
