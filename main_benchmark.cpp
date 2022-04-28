@@ -32,7 +32,7 @@ int main()
     double y0 = 0;
     double y1 = 0.05;
     double z0 = 0.0;
-    double z1 = 0.0025;
+    double z1 = 0.002;
     
     // Material Properties
     double k = 0.4;         // Thermal Conductivity (W/mC)
