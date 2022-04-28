@@ -21,29 +21,32 @@ int main()
 {
     auto start_time = chrono::high_resolution_clock::now();
 
-    double power    = 2909;
-    double radii    = 0.02;
-    double p_den    = power/(M_PI*radii*radii);
-    double T_init   = 23.7;
-    double k_init   = 0.016*T_init + 10.866;
-    double cp_init  = 435;
-    double rho_init = 8220;
-    double T_liq    = 1336;
+    double radii    = 0.00072;
+    double p_den    = 415000000;
+    double T_init   = 24.85;
+    double k_init   = 42.636;
+    double cp_init  = 510;
+    double rho_init = 7800;
+    double T_liq    = 1500;
+    double h_fus    = 2.5e5;
+    double T_vap    = 3000;
+    double h_vap    = 6.8e6;
+    double sigma    = radii/3;
 
     double x_left   = 0;
-    double x_right  = 0.1524;
+    double x_right  = 0.01;
     double y_bottom = 0;
-    double y_top    = 0.1524;
-    double z_front  = 0.0016;
+    double y_top    = 0.01;
+    double z_front  = 0.005;
     double z_back   = 0;
 
     double eax = 1;
     double eay = 1;
-    double eaz = 1/12.7;
+    double eaz = 1;
 
-    int nx = 60;
-    int ny = 60;
-    int nz = 8;
+    int nx = 50;
+    int ny = 50;
+    int nz = 25;
 
     double dx = (x_right-x_left)/(nx);
     double dy = (y_top-y_bottom)/(ny);
@@ -53,6 +56,7 @@ int main()
     vector<double> k, cp, rho;
     vector<double> x_w, y_w, z_w;
     vector<double> q_x, q_y, q_z;
+    vector<double> h_fusion, h_vaporization;
     vector<int> is_dummy;
 
     double n_dummy = 4;
@@ -83,7 +87,7 @@ int main()
                 hy.push_back(dy);
                 hz.push_back(dz);
 
-                if ((z_par<z_back+dz) && (z_par>z_back) && (pow(x_par-0.0762,2)+pow(y_par-0.0762,2) < pow(0.02,2)))
+                if ((z_par<z_back+dz) && (z_par>z_back) && (pow(x_par-0.005,2)+pow(y_par-0.005,2) < pow(radii,2)))
                 {
                     q_x.push_back(0);
                     q_y.push_back(0);
@@ -99,6 +103,8 @@ int main()
                 k.push_back(k_init);
                 cp.push_back(cp_init);
                 rho.push_back(rho_init);
+                h_fusion.push_back(h_fus);
+                h_vaporization.push_back(h_vap);
 
                 x_w.push_back(eay*eaz*x_par);
                 y_w.push_back(eax*eaz*y_par);
@@ -109,6 +115,10 @@ int main()
                 {
                     is_dummy.push_back(1);
                 }
+                // else if (pow(x_par-0.005,2)+pow(y_par-0.005,2)+pow(z_par,2) > pow(0.004,2))
+                // {
+                //     is_dummy.push_back(1);
+                // }
                 else
                 {
                     is_dummy.push_back(0);
@@ -183,9 +193,9 @@ int main()
 
     int count = 0;
     double t  = 0;
-    double dt = 1e-2;
+    double dt = 1e-4;
 
-    string name = "output/Thin Block/result/out_" + to_string(count) + ".csv";
+    string name = "output/Thick Block/result/out_" + to_string(count) + ".csv";
 
     ofstream output1;
 
@@ -207,9 +217,9 @@ int main()
     auto start_loop_segment = chrono::high_resolution_clock::now();
     auto end_loop_segment = chrono::high_resolution_clock::now();
 
-    while (t < 15 /*count < 1*/)
+    while (t < 0.24 /*count < 1*/)
     {
-        if (count % 20 == 0)
+        if (count % 50 == 0)
         {
             start_loop_segment = chrono::high_resolution_clock::now();
         }
@@ -261,21 +271,47 @@ int main()
         // double int_time_ms = std::chrono::duration_cast <std::chrono::milliseconds> (end_int-end_dtdt).count();
         // printf("Time Integration Time   : %f second\n", int_time_ms/1000);
 
-        k.clear();
         # pragma omp parallel for
         for (int i = 0; i < num_particle; i++)
         {
-            if (T[i] > 1336)
+            if (T[i] > T_liq && h_fusion[i] > 0)
             {
-                T[i] = 1336;
+                double heat_energy = (T[i]-T_liq)*cp[i];
+
+                if (heat_energy > h_fusion[i])
+                {
+                    double dT = h_fusion[i]/cp[i];
+                    T[i] = T[i] - dT;
+                    h_fusion[i] = 0;
+                }
+                else
+                {
+                    T[i] = T_liq;
+                    h_fusion[i] = h_fusion[i] - heat_energy;
+                }
             }
-            k.push_back(0.016*T[i] + 10.866);
+            else if (T[i] > T_vap && h_vaporization[i] > 0)
+            {
+                double heat_energy = (T[i]-T_vap)*cp[i];
+
+                if (heat_energy > h_vaporization[i])
+                {
+                    double dT = h_vaporization[i]/cp[i];
+                    T[i] = T[i] - dT;
+                    h_vaporization[i] = 0;
+                }
+                else
+                {
+                    T[i] = T_vap;
+                    h_vaporization[i] = h_vaporization[i] - heat_energy;
+                }
+            }
         }
 
         t += dt;
         count += 1;
 
-        if (count % 20 == 0)
+        if (count % 50 == 0)
         {
             end_loop_segment = chrono::high_resolution_clock::now();
             double loop_time_ms = std::chrono::duration_cast <std::chrono::milliseconds> (end_loop_segment-start_loop_segment).count();
@@ -283,9 +319,9 @@ int main()
             cout << count <<":"<<"\t"<< t << "\t\t Segment time: " << loop_time_ms/1000 << endl;
         }
         
-        if (count % 20 == 0)
+        if (count % 50 == 0)
         {
-            string name = "output/Thin Block/result/out_" + to_string(count) + ".csv";
+            string name = "output/Thick Block/result/out_" + to_string(count) + ".csv";
 
             ofstream output1;
 
@@ -318,7 +354,7 @@ int main()
     printf("Calculation Time            : %f second\n\n", calc_time_ms/1000);
 
     ofstream output2;
-    output2.open("output/Thin Block/result/summary.csv");
+    output2.open("output/Thick Block/result/summary.csv");
     
     output2  << "Number of Particle," << x.size() <<"\n"
             << "Neighbor Search Time," << neighbor_time_ms/1000 << "\n"
