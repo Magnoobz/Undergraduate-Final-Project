@@ -56,7 +56,7 @@ int main()
     double Re      = 2.4;
     double n_dummy = 3;
     double t       = 0;
-    double dt      = 2e-3;
+    double dt      = 4e-3;
     
     // Calculation
     double x_length = x1-x0;
@@ -98,6 +98,9 @@ int main()
     vector<int> flux;
 
     vector<int> top, bottom, left, right, right1, right2, front, back;
+
+    loop_count = 0;
+    iter       = 50000;
 
     // Initialize Particle
     initialize_particle_3D(x0*eax,x1*eax,y0*eay,y1*eay,z0*eaz,z1*eaz,nx,ny,nz,n_dummy,not_moving,xw,yw,zw,h_temp);
@@ -332,6 +335,11 @@ int main()
     }
 
     int num_mirror=mirror.size();
+    # pragma omp parallel for
+    for (int i = 0; i < num_mirror; i++)
+    {
+        Temp[mirror[i]] = 2*T-Temp[real[i]];
+    }
 
     // Neighbor Search
     auto start_neighbor_search = chrono::high_resolution_clock::now();
@@ -410,13 +418,12 @@ int main()
         }
     }
     
-    loop_count = 0;
-    iter       = 100000;
+    
 
     auto start_loop_segment = chrono::high_resolution_clock::now();
     auto end_loop_segment = chrono::high_resolution_clock::now();
 
-    while (loop_count < iter)
+    while (/*loop_count < iter*/ true)
     {
         if (loop_count % 10 == 0)
         {
@@ -466,12 +473,23 @@ int main()
         //         }
         //     }
         // }
+        vector<double> T_Temp;
+        T_Temp = Temp;
         time_integration(dt, Temp, dTdt);
 
         # pragma omp parallel for
         for (int i = 0; i < num_mirror; i++)
         {
             Temp[mirror[i]] = 2*T-Temp[real[i]];
+        }
+        
+        double T_diff = 0;
+        # pragma omp parallel for
+        for (int i = 0; i < num_particle; i++)
+        {
+            if (is_dummy[i] == 1){continue;}
+
+            T_diff += abs(Temp[i] - T_Temp[i]);
         }
 
         t+=dt;
@@ -482,7 +500,7 @@ int main()
             end_loop_segment = chrono::high_resolution_clock::now();
             double loop_time_ms = std::chrono::duration_cast <std::chrono::milliseconds> (end_loop_segment-start_loop_segment).count();
             
-            cout << loop_count <<":"<<"\t"<< t << "\t\t Segment time: " << loop_time_ms/1000 << endl;
+            cout << loop_count <<":"<<"\t"<< t << "\t\t Segment time: " << loop_time_ms/1000 << "\tsecond \t\t" << T_diff << endl;
         }
         
         if (loop_count % 100 == 0)
@@ -520,6 +538,8 @@ int main()
                 }
             }
         }
+
+        if (T_diff < 1e-2){break;}
     }
     
     auto end_time = chrono::high_resolution_clock::now();
