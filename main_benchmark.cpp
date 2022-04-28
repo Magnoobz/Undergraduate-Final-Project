@@ -226,13 +226,13 @@ int main()
     {
         if (is_dummy[i] == 1){continue;}
 
-        if (x[i] < x0 + 0.002){left[i] = 1;}
+        if (x[i] < x0 + 0.004){left[i] = 1;}
         else if ((x[i] > x1 - 0.002)&&(x[i] < x1)){right[i] = 1;}
         else if ((x[i] > x1 - 0.004)&&(x[i] < x1-0.0002)){right1[i] = 1;}
         else if ((x[i] > x1 - 0.006)&&(x[i] < x1-0.0004)){right2[i] = 1;}
 
         if (y[i] < y0 + 0.002){bottom[i] = 1;}
-        else if (y[i] > y1 - 0.002){top[i] = 1;}
+        else if (y[i] > y1 - 0.004){top[i] = 1;}
 
         if (z[i] < z0 + 0.002){back[i] = 1;}
         else if (z[i] > z1 - 0.002){front[i] = 1;}
@@ -247,7 +247,7 @@ int main()
 
         if (left[i] == 1)
         {
-            double multiplier = pow(1-x[i]/0.002,1);
+            double multiplier = pow(1-(x[i]-0.001)/0.004,1);
             area_temp += hy[i]*hz[i]*multiplier;
             qx[i] = multiplier;
             flux.push_back(i);
@@ -256,7 +256,7 @@ int main()
         {
             if ((right[i] == 1) /*|| (left[i] == 1)*/){continue;}
             
-            hhy[i] = -h;
+            hhy[i] = -h/2;
         }
 
         if (right[i] == 1)
