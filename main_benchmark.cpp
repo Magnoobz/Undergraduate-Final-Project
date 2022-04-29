@@ -37,7 +37,7 @@ int main()
     // Material Properties
     double k = 0.4;         // Thermal Conductivity (W/mC)
     double Q = 1.353e5;     // Volume heating (W/m3)
-    double q = 3500;        // Heat Flux (W/m2)
+    double q = 1500;        // Heat Flux (W/m2)
     double T = 25;          // Initial Temperature (C)
     double h = 60;          // Convective Parameter (W/m2C)
     
@@ -247,7 +247,7 @@ int main()
 
         if (left[i] == 1)
         {
-            double multiplier = pow(1-(x[i]-0.001)/0.004,1);
+            double multiplier = pow(1-(x[i]-0.001)/0.004,1/2.);
             area_temp += hy[i]*hz[i]*multiplier;
             qx[i] = multiplier;
             flux.push_back(i);
@@ -454,25 +454,6 @@ int main()
         vector<double> dTdt;
         calc_dTdt_3D(Cp, Rho, hx, hy, hz, neighbor, kdeltaT_ij_x, kdeltaT_ij_y, kdeltaT_ij_z, Sij_Star_x, Sij_Star_y, Sij_Star_z, Bi_x, Bi_y, Bi_z, kdeltaT_x, kdeltaT_y, kdeltaT_z, heat_flux, is_dummy, dTdt);
         
-        // for (int i = 0; i < num_particle; i++)
-        // {
-        //     if (right[i] == 1)
-        //     {
-        //         double x_temp = x[i];
-        //         double y_temp = y[i];
-        //         double z_temp = z[i];
-        //         double dTdt_temp = dTdt[i];
-
-        //         # pragma omp parallel for
-        //         for (int j = 0; j < num_particle; j++)
-        //         {
-        //             if ((y[j] == y_temp) && (z[j] == z_temp))
-        //             {
-        //                 dTdt[j] += (-x_temp+x[j])*dTdt_temp; 
-        //             }
-        //         }
-        //     }
-        // }
         vector<double> T_Temp;
         T_Temp = Temp;
         time_integration(dt, Temp, dTdt);
@@ -481,6 +462,26 @@ int main()
         for (int i = 0; i < num_mirror; i++)
         {
             Temp[mirror[i]] = 2*T-Temp[real[i]];
+        }
+
+        for (int i = 0; i < num_particle; i++)
+        {
+            if (right[i] == 1)
+            {
+                double x_temp = x[i];
+                double y_temp = y[i];
+                double z_temp = z[i];
+                double Temp_temp = Temp[i]-T;
+
+                # pragma omp parallel for
+                for (int j = 0; j < num_particle; j++)
+                {
+                    if ((y[j] == y_temp) && (z[j] == z_temp))
+                    {
+                        Temp[j] += -Temp_temp; 
+                    }
+                }
+            }
         }
         
         double T_diff = 0;
