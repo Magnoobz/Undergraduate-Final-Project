@@ -59,6 +59,15 @@ int main()
     double y_length = y1-y0;
 
     double dx = x_length*eax/nx;
+    double dy = y_length*eay/ny;
+
+    x0 = x0 - dx/eax/2;
+    x1 = x1 + dx/eax/2;
+    y0 = y0 - dy/eay/2;
+    y1 = y1 + dy/eay/2;
+
+    nx = nx+1;
+    ny = ny+1;
 
     double total_flux = q*y_length; // W
 
