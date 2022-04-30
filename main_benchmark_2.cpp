@@ -28,21 +28,27 @@ int main()
 
     // Solid Domain
     double x0 = 0;
-    double x1 = 0.1;
+    double x1 = 2;
     double y0 = 0;
-    double y1 = 0.05;
+    double y1 = 1;
     double z0 = 0.0;
-    double z1 = 0.002;
+    double z1 = 0.04;
     
     // Material Properties
-    double k = 0.4;         // Thermal Conductivity (W/mC)
-    double Q = 0/*1.353e5*/;     // Volume heating (W/m3)
+    double k = 1;         // Thermal Conductivity (W/mC)
+    double Q = 50;     // Volume heating (W/m3)
     double q = 3500;        // Heat Flux (W/m2)
-    double T = 25;          // Initial Temperature (C)
+    double T = 100;          // Initial Temperature (C)
     double h = 60;          // Convective Parameter (W/m2C)
+
+    double T_top    = 100;          // Initial Temperature (C)
+    double T_bottom = 100;          // Initial Temperature (C)
+    double T_left   = 100;          // Initial Temperature (C)
+    double T_right  = 100;          // Initial Temperature (C)
+
     
-    double rho = 1200;      // density (kg/m3)
-    double cp  = 10;        // heat capacity (J/kgK)
+    double rho = 120;      // density (kg/m3)
+    double cp  = 1;        // heat capacity (J/kgK)
 
     // Dommain Discretization
     double eax = 1;
@@ -97,7 +103,11 @@ int main()
     double area_temp;
     vector<int> flux;
 
-    vector<int> top, bottom, left, right, right1, right2, front, back;
+    vector<int> top, top1, top2;
+    vector<int> bottom, bottom1, bottom2;
+    vector<int> right, right1, right2;
+    vector<int> left, left1, left2;
+    vector<int> front, back;
 
     loop_count = 0;
     iter       = 50000;
@@ -185,10 +195,16 @@ int main()
     is_dummy.resize(num_particle);
 
     top.resize(num_particle);
+    top1.resize(num_particle);
+    top2.resize(num_particle);
     bottom.resize(num_particle);
+    bottom1.resize(num_particle);
+    bottom2.resize(num_particle);
     front.resize(num_particle);
     back.resize(num_particle);
     left.resize(num_particle);
+    left1.resize(num_particle);
+    left2.resize(num_particle);
     right.resize(num_particle);
     right1.resize(num_particle);
     right2.resize(num_particle);
@@ -211,7 +227,7 @@ int main()
         hy[i] = h_temp[i]/eay;
         hz[i] = h_temp[i]/eaz;
         
-        if ((x[i] < x0) || (x[i] > x1+0.004) || (y[i] < y0) || (y[i] > y1) || (z[i] < z0) || (z[i] > z1))
+        if ((x[i] < x0) || (x[i] > x1+2*0.04) || (y[i] < y0) || (y[i] > y1+2*0.04) || (z[i] < z0) || (z[i] > z1))
         {
             is_dummy[i] = 1;
         }
@@ -226,40 +242,40 @@ int main()
     {
         if (is_dummy[i] == 1){continue;}
 
-        if (x[i] < x0 + 0.004){left[i] = 1;}
-        else if ((x[i] > x1 - 0.002)&&(x[i] < x1)){right[i] = 1;}
-        else if ((x[i] > x1 - 0.004)&&(x[i] < x1-0.0002)){right1[i] = 1;}
-        else if ((x[i] > x1 - 0.006)&&(x[i] < x1-0.0004)){right2[i] = 1;}
+        if ((x[i] < x0 + 1*0.04)&&(x[i] > x0)){left[i] = 1;}
+        else if ((x[i] < x0 + 2*0.04)&&(x[i] > x0+1*0.04)){left1[i] = 1;}
+        else if ((x[i] < x0 + 3*0.04)&&(x[i] > x0+2*0.04)){left2[i] = 1;}
+        else if ((x[i] > x1 - 1*0.04)&&(x[i] < x1)){right[i] = 1;}
+        else if ((x[i] > x1 - 2*0.04)&&(x[i] < x1-1*0.04)){right1[i] = 1;}
+        else if ((x[i] > x1 - 3*0.04)&&(x[i] < x1-2*0.04)){right2[i] = 1;}
 
-        if (y[i] < y0 + 0.002){bottom[i] = 1;}
-        else if (y[i] > y1 - 0.004){top[i] = 1;}
+        if ((y[i] < y0 + 1*0.04)&&(y[i] > y0)){bottom[i] = 1;}
+        else if ((y[i] < y0 + 2*0.04)&&(y[i] > y0+1*0.04)){bottom1[i] = 1;}
+        else if ((y[i] < y0 + 3*0.04)&&(y[i] > y0+2*0.04)){bottom2[i] = 1;}
+        else if ((y[i] > y1 - 1*0.04)&&(y[i] < y1)){top[i] = 1;}
+        else if ((y[i] > y1 - 2*0.04)&&(y[i] < y1-1*0.04)){top1[i] = 1;}
+        else if ((y[i] > y1 - 3*0.04)&&(y[i] < y1-1*0.04)){top2[i] = 1;}
 
-        if (z[i] < z0 + 0.002){back[i] = 1;}
-        else if (z[i] > z1 - 0.002){front[i] = 1;}
+        if (z[i] < z0 + 1*0.04){back[i] = 1;}
+        else if (z[i] > z1 - 1*0.04){front[i] = 1;}
     }
 
-    
+    // # pragma omp parallel for
+    // for (int i = 0; i < num_particle; i++)
+    // {
+    //     if (left[i] == 1){Temp[i] = T_left;}
+    //     if (top[i] == 1){Temp[i] = T_top;}
+    //     if (right[i] == 1){Temp[i] = T_right;}
+    //     if (bottom[i] == 1){Temp[i] = T_bottom;}
+    // }
 
     # pragma omp parallel for
     for (int i = 0; i < num_particle; i++)
     {
         if (is_dummy[i] == 1){continue;}
 
-        if (left[i] == 1)
-        {
-            double multiplier = pow(1-(x[i]-0.001)/0.004,1/2.);
-            area_temp += hy[i]*hz[i]*multiplier;
-            qx[i] = multiplier;
-            flux.push_back(i);
-        }
-        if ((top[i] == 1) || (top[i] == 1))
-        {
-            if ((right[i] == 1) /*|| (left[i] == 1)*/){continue;}
-            
-            hhy[i] = -h/2;
-        }
-
-        if (right[i] == 1)
+        
+        if (/*(left[i] == 1) || */(right[i] == 1) || (top[i] == 1)/* || (bottom[i] == 1)*/)
         {
             QQ[i] = 0;
         }
@@ -270,15 +286,131 @@ int main()
         // }
     }
 
-    q = total_flux/area_temp;
+    // q = total_flux/area_temp;
 
-    # pragma omp parallel for
-    for (int i : flux)
+    // # pragma omp parallel for
+    // for (int i : flux)
+    // {
+    //     qx[i] = qx[i]*q;
+    // }
+
+    vector<int> real1, mirror1;
+    vector<int> real2, mirror2;
+    vector<int> real3, mirror3;
+    vector<int> real4, mirror4;
+
+    // for (int i = 0; i < num_particle; i++)
+    // {
+    //     if (left1[i] == 1)
+    //     {
+    //         double x_temp = x[i];
+    //         double y_temp = y[i];
+    //         double z_temp = z[i];
+
+    //         for (int j = 0; j < num_particle; j++)
+    //         {
+    //             if (is_dummy[j] == 1){continue;}
+
+    //             if (y[j] == y_temp)
+    //             {
+    //                 if(z[j] == z_temp)
+    //                 {
+    //                     if ((x[j] < x0) && (x[j] > x0-1*0.04))
+    //                     {
+    //                         real1.push_back(i);
+    //                         mirror1.push_back(j);
+    //                     }
+    //                 }
+    //             }
+    //         }
+    //     }
+    // }
+
+    // for (int i = 0; i < num_particle; i++)
+    // {
+    //     if (left2[i] == 1)
+    //     {
+    //         double x_temp = x[i];
+    //         double y_temp = y[i];
+    //         double z_temp = z[i];
+
+    //         for (int j = 0; j < num_particle; j++)
+    //         {
+    //             if (is_dummy[j] == 1){continue;}
+
+    //             if (y[j] == y_temp)
+    //             {
+    //                 if(z[j] == z_temp)
+    //                 {
+    //                     if ((x[j] < x0-1*0.04) && (x[j] > x0-2*0.04))
+    //                     {
+    //                         real1.push_back(i);
+    //                         mirror1.push_back(j);
+    //                     }
+    //                 }
+    //             }
+    //         }
+    //     }
+    // }
+
+
+
+    for (int i = 0; i < num_particle; i++)
     {
-        qx[i] = qx[i]*q;
+        if (top1[i] == 1)
+        {
+            double x_temp = x[i];
+            double y_temp = y[i];
+            double z_temp = z[i];
+
+            for (int j = 0; j < num_particle; j++)
+            {
+                if (is_dummy[j] == 1){continue;}
+
+                if (x[j] == x_temp)
+                {
+                    if(z[j] == z_temp)
+                    {
+                        if ((y[j] > y1) && (y[j] < y1+1*0.04))
+                        {
+                            real2.push_back(i);
+                            mirror2.push_back(j);
+                        }
+                    }
+                }
+            }
+        }
     }
 
-    vector<int> real, mirror;
+    for (int i = 0; i < num_particle; i++)
+    {
+        if (top2[i] == 1)
+        {
+            double x_temp = x[i];
+            double y_temp = y[i];
+            double z_temp = z[i];
+
+            for (int j = 0; j < num_particle; j++)
+            {
+                if (is_dummy[j] == 1){continue;}
+
+                if (x[j] == x_temp)
+                {
+                    if(z[j] == z_temp)
+                    {
+                        if ((y[j] > y1+1*0.04) && (y[j] < y1+2*0.04))
+                        {
+                            real2.push_back(i);
+                            mirror2.push_back(j);
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+
+
 
     for (int i = 0; i < num_particle; i++)
     {
@@ -296,10 +428,10 @@ int main()
                 {
                     if(z[j] == z_temp)
                     {
-                        if ((x[j] > x1) && (x[j] < x1+0.002))
+                        if ((x[j] > x1) && (x[j] < x1+1*0.04))
                         {
-                            real.push_back(i);
-                            mirror.push_back(j);
+                            real3.push_back(i);
+                            mirror3.push_back(j);
                         }
                     }
                 }
@@ -323,10 +455,10 @@ int main()
                 {
                     if(z[j] == z_temp)
                     {
-                        if ((x[j] > x1+0.002) && (x[j] < x1+0.004))
+                        if ((x[j] > x1+1*0.04) && (x[j] < x1+2*0.04))
                         {
-                            real.push_back(i);
-                            mirror.push_back(j);
+                            real3.push_back(i);
+                            mirror3.push_back(j);
                         }
                     }
                 }
@@ -334,11 +466,84 @@ int main()
         }
     }
 
-    int num_mirror=mirror.size();
+
+    // for (int i = 0; i < num_particle; i++)
+    // {
+    //     if (bottom1[i] == 1)
+    //     {
+    //         double x_temp = x[i];
+    //         double y_temp = y[i];
+    //         double z_temp = z[i];
+
+    //         for (int j = 0; j < num_particle; j++)
+    //         {
+    //             if (is_dummy[j] == 1){continue;}
+
+    //             if (x[j] == x_temp)
+    //             {
+    //                 if(z[j] == z_temp)
+    //                 {
+    //                     if ((y[j] < y0) && (y[j] > y0-1*0.04))
+    //                     {
+    //                         real4.push_back(i);
+    //                         mirror4.push_back(j);
+    //                     }
+    //                 }
+    //             }
+    //         }
+    //     }
+    // }
+
+    // for (int i = 0; i < num_particle; i++)
+    // {
+    //     if (bottom2[i] == 1)
+    //     {
+    //         double x_temp = x[i];
+    //         double y_temp = y[i];
+    //         double z_temp = z[i];
+
+    //         for (int j = 0; j < num_particle; j++)
+    //         {
+    //             if (is_dummy[j] == 1){continue;}
+
+    //             if (x[j] == x_temp)
+    //             {
+    //                 if(z[j] == z_temp)
+    //                 {
+    //                     if ((y[j] < y0-1*0.04) && (y[j] > y0-2*0.04))
+    //                     {
+    //                         real4.push_back(i);
+    //                         mirror4.push_back(j);
+    //                     }
+    //                 }
+    //             }
+    //         }
+    //     }
+    // }
+
+    int num_mirror1=mirror1.size();
+    int num_mirror2=mirror2.size();
+    int num_mirror3=mirror3.size();
+    int num_mirror4=mirror4.size();
     # pragma omp parallel for
-    for (int i = 0; i < num_mirror; i++)
+    for (int i = 0; i < num_mirror1; i++)
     {
-        Temp[mirror[i]] = 2*T-Temp[real[i]];
+        Temp[mirror1[i]] = 2*T_left-Temp[real1[i]];
+    }
+    # pragma omp parallel for
+    for (int i = 0; i < num_mirror2; i++)
+    {
+        Temp[mirror2[i]] = 2*T_top-Temp[real2[i]];
+    }
+    # pragma omp parallel for
+    for (int i = 0; i < num_mirror3; i++)
+    {
+        Temp[mirror3[i]] = 2*T_right-Temp[real3[i]];
+    }
+    # pragma omp parallel for
+    for (int i = 0; i < num_mirror4; i++)
+    {
+        Temp[mirror4[i]] = 2*T_bottom-Temp[real4[i]];
     }
 
     // Neighbor Search
@@ -385,9 +590,9 @@ int main()
     double sijstar_time_ms = std::chrono::duration_cast <std::chrono::milliseconds> (end_sijstar-end_bi).count();
     printf("Sij Star Time           : %f second\n", sijstar_time_ms/1000);
 
-    string name1 = "output/Benchmark 1/result/output_1_0.csv";
-    string name2 = "output/Benchmark 1/result/output_2_0.csv";
-    string name3 = "output/Benchmark 1/result/output_3_0.csv";
+    string name1 = "output/Benchmark 2/result/output_1_0.csv";
+    string name2 = "output/Benchmark 2/result/output_2_0.csv";
+    string name3 = "output/Benchmark 2/result/output_3_0.csv";
 
     ofstream output1, output2, output3;
 
@@ -401,7 +606,7 @@ int main()
 
     for (int i = 0; i < num_particle; i++)
     {
-        if (x[i] >= x0 && x[i] <= x1+0.004 && y[i] >= y0 && y[i] <= y1 && z[i] >= z0 && z[i] <= z1)
+        if (x[i] >= x0 && x[i] <= x1 && y[i] >= y0 && y[i] <= y1 && z[i] >= z0 && z[i] <= z1)
         {
             if (h_temp[i] == dx)
             {
@@ -459,30 +664,45 @@ int main()
         time_integration(dt, Temp, dTdt);
 
         # pragma omp parallel for
-        for (int i = 0; i < num_mirror; i++)
+        for (int i = 0; i < num_mirror1; i++)
         {
-            Temp[mirror[i]] = 2*T-Temp[real[i]];
+            Temp[mirror1[i]] = 2*T_left-Temp[real1[i]];
+        }
+        # pragma omp parallel for
+        for (int i = 0; i < num_mirror2; i++)
+        {
+            Temp[mirror2[i]] = 2*T_top-Temp[real2[i]];
+        }
+        # pragma omp parallel for
+        for (int i = 0; i < num_mirror3; i++)
+        {
+            Temp[mirror3[i]] = 2*T_right-Temp[real3[i]];
+        }
+        # pragma omp parallel for
+        for (int i = 0; i < num_mirror4; i++)
+        {
+            Temp[mirror4[i]] = 2*T_bottom-Temp[real4[i]];
         }
 
-        for (int i = 0; i < num_particle; i++)
-        {
-            if (right[i] == 1)
-            {
-                double x_temp = x[i];
-                double y_temp = y[i];
-                double z_temp = z[i];
-                double Temp_temp = Temp[i]-T;
+        // for (int i = 0; i < num_particle; i++)
+        // {
+        //     if (right[i] == 1)
+        //     {
+        //         double x_temp = x[i];
+        //         double y_temp = y[i];
+        //         double z_temp = z[i];
+        //         double Temp_temp = Temp[i]-T;
 
-                # pragma omp parallel for
-                for (int j = 0; j < num_particle; j++)
-                {
-                    if ((y[j] == y_temp) && (z[j] == z_temp))
-                    {
-                        Temp[j] += -Temp_temp; 
-                    }
-                }
-            }
-        }
+        //         # pragma omp parallel for
+        //         for (int j = 0; j < num_particle; j++)
+        //         {
+        //             if ((y[j] == y_temp) && (z[j] == z_temp))
+        //             {
+        //                 Temp[j] += -Temp_temp; 
+        //             }
+        //         }
+        //     }
+        // }
         
         double T_diff = 0;
         # pragma omp parallel for
@@ -506,9 +726,9 @@ int main()
         
         if (loop_count % 100 == 0)
         {
-            string name1 = "output/Benchmark 1/result/output_1_" + to_string(loop_count) + ".csv";
-            string name2 = "output/Benchmark 1/result/output_2_" + to_string(loop_count) + ".csv";
-            string name3 = "output/Benchmark 1/result/output_3_" + to_string(loop_count) + ".csv";
+            string name1 = "output/Benchmark 2/result/output_1_" + to_string(loop_count) + ".csv";
+            string name2 = "output/Benchmark 2/result/output_2_" + to_string(loop_count) + ".csv";
+            string name3 = "output/Benchmark 2/result/output_3_" + to_string(loop_count) + ".csv";
 
             ofstream output4, output5, output6;
 
@@ -556,7 +776,7 @@ int main()
 
     
     ofstream output7;
-    output7.open("output/Benchmark 1/result/Summary.csv");
+    output7.open("output/Benchmark 2/result/Summary.csv");
     
     output7  << "Number of Particle," << x.size() <<"\n"
             << "Movement Time," << movement_ms/1000 << "\n"
