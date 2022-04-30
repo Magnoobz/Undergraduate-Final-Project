@@ -16,6 +16,7 @@ void calc_Laplacian(vector<double> k,
                     vector<double> Bi_y,
                     vector<double> kdeltaT_x,
                     vector<double> kdeltaT_y,
+                    vector<double> heat_flux,
                     vector<int> is_dummy,
                     vector<double> &Laplacian)
 {
@@ -43,7 +44,7 @@ void calc_Laplacian(vector<double> k,
             temp[i] += kdeltaT_ij_x[i][j]*Sij_Star_x[i][j] + kdeltaT_ij_y[i][j]*Sij_Star_y[i][j];
         }
 
-        temp[i] += Bi_x[i]*kdeltaT_x[i] + Bi_y[i]*kdeltaT_y[i];
+        temp[i] += Bi_x[i]*kdeltaT_x[i] + Bi_y[i]*kdeltaT_y[i] + heat_flux[i];
         
         temp[i] = temp[i]/(k[i]*hx[i]*hy[i]);
     }
@@ -64,6 +65,7 @@ void calc_dTdt(vector<double> cp,
                vector<double> Bi_y,
                vector<double> kdeltaT_x,
                vector<double> kdeltaT_y,
+               vector<double> heat_flux,
                vector<int> is_dummy,
                vector<double> &dTdt)
 {
@@ -91,7 +93,7 @@ void calc_dTdt(vector<double> cp,
             temp[i] += kdeltaT_ij_x[i][j]*Sij_Star_x[i][j] + kdeltaT_ij_y[i][j]*Sij_Star_y[i][j];
         }
 
-        temp[i] += Bi_x[i]*kdeltaT_x[i] + Bi_y[i]*kdeltaT_y[i];
+        temp[i] += Bi_x[i]*kdeltaT_x[i] + Bi_y[i]*kdeltaT_y[i] + heat_flux[i];
         
         temp[i] = temp[i]/(cp[i]*rho[i]*hx[i]*hy[i]);
     }
