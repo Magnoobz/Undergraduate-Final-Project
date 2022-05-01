@@ -242,7 +242,7 @@ int main()
         else if ((x[i] > x1 - 3*dx)&&(x[i] < x1-2*dx)){right2[i] = 1;}
 
         if (y[i] < y0 + dx){bottom[i] = 1;}
-        else if (y[i] > y1 - 2*dx){top[i] = 1;}
+        else if (y[i] > y1 - 3*dx){top[i] = 1;}
     }
 
     
@@ -261,9 +261,9 @@ int main()
         }
         if ((top[i] == 1) || (top[i] == 1))
         {
-            if ((right[i] == 1) || (left[i] == 1)){continue;}
+            if ((right[i] == 1)){continue;}
             
-            hhy[i] = -h/2;
+            hhy[i] = -h/3;
         }
 
         if (right[i] == 1)
