@@ -254,16 +254,16 @@ int main()
 
         if (left[i] == 1)
         {
-            double multiplier = pow(1-(x[i])/2*dx,2);
+            double multiplier = pow(1-(x[i])/2*dx,1);
             area_temp += hy[i]*multiplier;
             qx[i] = multiplier;
             flux.push_back(i);
         }
         if ((top[i] == 1) || (top[i] == 1))
         {
-            if ((right[i] == 1) /*|| (left[i] == 1)*/){continue;}
+            if ((right[i] == 1) || (left[i] == 1)){continue;}
             
-            hhy[i] = -h/2*(nx-1)/nx;
+            hhy[i] = -h/2;
         }
 
         if (right[i] == 1)
