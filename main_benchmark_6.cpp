@@ -45,14 +45,18 @@ int main()
     // Dommain Discretization
     double eax = 1;
     double eay = 1;
-    int    nx  = 100;
-    int    ny  = 50;
+
+    vector<int> ny_s{5 , 10, 20, 25, 40, 50, 75, 100};
+    int option = 6;
+    int    nx  = ny_s[option]*2;
+    int    ny  = ny_s[option];
 
     // Other Parameters
     double Re      = 2.1;
     double n_dummy = 3;
     double t       = 0;
     double dt      = 1e-3;
+    int    done    = 0;
     
     // Calculation
     double x_length = x1-x0;
@@ -68,6 +72,9 @@ int main()
 
     nx = nx+1;
     ny = ny+1;
+
+    x_length = x1-x0;
+    y_length = y1-y0;
 
     double total_flux = q*y_length; // W
 
@@ -247,7 +254,7 @@ int main()
 
         if (left[i] == 1)
         {
-            double multiplier = pow(1-(x[i]-0.5*dx)/2*dx,1/2.);
+            double multiplier = pow(1-(x[i])/2*dx,2);
             area_temp += hy[i]*multiplier;
             qx[i] = multiplier;
             flux.push_back(i);
@@ -256,7 +263,7 @@ int main()
         {
             if ((right[i] == 1) /*|| (left[i] == 1)*/){continue;}
             
-            hhy[i] = -h/2;
+            hhy[i] = -h/2*(nx-1)/nx;
         }
 
         if (right[i] == 1)
@@ -377,9 +384,9 @@ int main()
     double sijstar_time_ms = std::chrono::duration_cast <std::chrono::milliseconds> (end_sijstar-end_bi).count();
     printf("Sij Star Time           : %f second\n", sijstar_time_ms/1000);
 
-    string name1 = "output/Benchmark 1/result/output_1_0.csv";
-    string name2 = "output/Benchmark 1/result/output_2_0.csv";
-    string name3 = "output/Benchmark 1/result/output_3_0.csv";
+    string name1 = "output/Benchmark 1/result " + to_string(option) + "/output_1_0.csv";
+    string name2 = "output/Benchmark 1/result " + to_string(option) + "/output_2_0.csv";
+    string name3 = "output/Benchmark 1/result " + to_string(option) + "/output_3_0.csv";
 
     ofstream output1, output2, output3;
 
@@ -395,7 +402,7 @@ int main()
     {
         if (x[i] >= x0 && x[i] <= x1 && y[i] >= y0 && y[i] <= y1)
         {
-            if (h_temp[i] == dx)
+            if (h_temp[i] > 0.93*dx)
             {
                 output1 << xw[i] << "," << yw[i] << "," << Temp[i] << "\n";
             }
@@ -417,7 +424,7 @@ int main()
 
     while (/*loop_count < iter*/ true)
     {
-        if (loop_count % 10 == 0)
+        if (loop_count % 100 == 0)
         {
             start_loop_segment = chrono::high_resolution_clock::now();
         }
@@ -487,7 +494,7 @@ int main()
         t+=dt;
         loop_count += 1;
 
-        if (loop_count % 10 == 0)
+        if (loop_count % 100 == 0)
         {
             end_loop_segment = chrono::high_resolution_clock::now();
             double loop_time_ms = std::chrono::duration_cast <std::chrono::milliseconds> (end_loop_segment-start_loop_segment).count();
@@ -495,11 +502,13 @@ int main()
             cout << loop_count <<":"<<"\t"<< t << "\t\t Segment time: " << loop_time_ms/1000 << "\tsecond \t\t" << T_diff << endl;
         }
         
-        if (loop_count % 100 == 0)
+        if (loop_count % 1000 == 0)
         {
-            string name1 = "output/Benchmark 1/result/output_1_" + to_string(loop_count) + ".csv";
-            string name2 = "output/Benchmark 1/result/output_2_" + to_string(loop_count) + ".csv";
-            string name3 = "output/Benchmark 1/result/output_3_" + to_string(loop_count) + ".csv";
+            if (T_diff < 5e-3){done = 1;}
+            
+            string name1 = "output/Benchmark 1/result " + to_string(option) + "/output_1_" + to_string(loop_count) + ".csv";
+            string name2 = "output/Benchmark 1/result " + to_string(option) + "/output_2_" + to_string(loop_count) + ".csv";
+            string name3 = "output/Benchmark 1/result " + to_string(option) + "/output_3_" + to_string(loop_count) + ".csv";
 
             ofstream output4, output5, output6;
 
@@ -515,7 +524,7 @@ int main()
             {
                 if (x[i] >= x0 && x[i] <= x1 && y[i] >= y0 && y[i] <= y1)
                 {
-                    if (h_temp[i] == dx)
+                    if (h_temp[i] > 0.93*dx)
                     {
                         output4 << xw[i] << "," << yw[i] << "," << Temp[i] << "\n";
                     }
@@ -531,23 +540,46 @@ int main()
             }
         }
 
-        if (T_diff < 5e-3){break;}
+        if (done == 1){break;}
     }
     
     auto end_time = chrono::high_resolution_clock::now();
 
     double calc_time_ms = std::chrono::duration_cast <std::chrono::milliseconds> (end_time-start_time).count();
 
+    
+    double tol = 1e-8;
+    double T_point1, T_point2, T_point3;
+    # pragma omp parallel for
+    for (int i = 0; i < num_particle; i++)
+    {
+        if ((-tol < x[i]) && (tol > x[i]) && (y[i] < tol) && (-tol < y[i]))
+        {
+            T_point1 = Temp[i];
+        }
+        else if ((-tol < x[i]) && (x[i] < tol) && (0.05-tol < y[i]) && (y[i] < 0.05+tol))
+        {
+            T_point2 = Temp[i];
+        }
+        else if ((0.05-tol < x[i]) && (x[i] < 0.05+tol) && (0.05-tol < y[i]) && (y[i] < 0.05+tol))
+        {
+            T_point3 = Temp[i];
+        }
+    }
+    
+    
     printf("\nNeighbor Search Time        : %f second\n", neighbor_time_ms/1000);
     printf("Calc Eta Time               : %f second\n", eta_time_ms/1000);
     printf("Sij Time                    : %f second\n", sij_time_ms/1000);
     printf("Bi Time                     : %f second\n", bi_time_ms/1000);
     printf("Sij Star Time               : %f second\n", sijstar_time_ms/1000);
     printf("Calculation Time            : %f second\n\n", calc_time_ms/1000);
+    printf("Point 1                     : %f C\n", T_point1);
+    printf("Point 2                     : %f C\n", T_point2);
+    printf("Point 3                     : %f C\n", T_point3);
 
-    
     ofstream output7;
-    output7.open("output/Benchmark 1/result/Summary.csv");
+    output7.open("output/Benchmark 1/result " + to_string(option) + "/Summary.csv");
     
     output7  << "Number of Particle," << x.size() <<"\n"
             << "Movement Time," << movement_ms/1000 << "\n"
@@ -556,5 +588,8 @@ int main()
             << "Sij Time," << sij_time_ms/1000 << "\n"
             << "Bi Time," << bi_time_ms/1000 << "\n"
             << "Sij Star Time," << sijstar_time_ms/1000 << "\n"
-            << "Calculation Time," << calc_time_ms/1000 << "\n";
+            << "Calculation Time," << calc_time_ms/1000 << "\n"
+            << "Point 1," << T_point1 << "\n"
+            << "Point 2," << T_point2 << "\n"
+            << "Point 3," << T_point3 << "\n";
 }
