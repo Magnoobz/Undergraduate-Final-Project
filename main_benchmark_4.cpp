@@ -47,7 +47,7 @@ int main()
     double eay = 1;
 
     vector<int> ny_s{5 , 10, 20, 25, 40, 50, 75, 100, 125, 150};
-    int option = 7;
+    int option = 4;
     int    nx  = ny_s[option]*2;
     int    ny  = ny_s[option];
 
@@ -242,7 +242,7 @@ int main()
         else if ((x[i] > x1 - 3*dx)&&(x[i] < x1-2*dx)){right2[i] = 1;}
 
         if (y[i] < y0 + dx){bottom[i] = 1;}
-        else if (y[i] > y1 - 3*dx){top[i] = 1;}
+        else if (y[i] > y1 - 2*dx){top[i] = 1;}
     }
 
     
@@ -263,7 +263,12 @@ int main()
         {
             if ((right[i] == 1)){continue;}
             
-            hhy[i] = -h/3;
+            hhy[i] = -h/2;
+
+            if (x[i] < 0.025)
+            {
+                hhy[i] = hhy[i]/(1+0.15*(0.025-x[i])/0.025);
+            }
         }
 
         if (right[i] == 1)
@@ -384,9 +389,9 @@ int main()
     double sijstar_time_ms = std::chrono::duration_cast <std::chrono::milliseconds> (end_sijstar-end_bi).count();
     printf("Sij Star Time           : %f second\n", sijstar_time_ms/1000);
 
-    string name1 = "output/Benchmark 1/result " + to_string(option) + "/output_1_0.csv";
-    string name2 = "output/Benchmark 1/result " + to_string(option) + "/output_2_0.csv";
-    string name3 = "output/Benchmark 1/result " + to_string(option) + "/output_3_0.csv";
+    string name1 = "output/Benchmark 1/result" + to_string(option) + "/output_1_0.csv";
+    string name2 = "output/Benchmark 1/result" + to_string(option) + "/output_2_0.csv";
+    string name3 = "output/Benchmark 1/result" + to_string(option) + "/output_3_0.csv";
 
     ofstream output1, output2, output3;
 
@@ -424,7 +429,7 @@ int main()
 
     while (/*loop_count < iter*/ true)
     {
-        if (loop_count % 100 == 0)
+        if (loop_count % 1000 == 0)
         {
             start_loop_segment = chrono::high_resolution_clock::now();
         }
@@ -494,7 +499,7 @@ int main()
         t+=dt;
         loop_count += 1;
 
-        if (loop_count % 100 == 0)
+        if (loop_count % 1000 == 0)
         {
             end_loop_segment = chrono::high_resolution_clock::now();
             double loop_time_ms = std::chrono::duration_cast <std::chrono::milliseconds> (end_loop_segment-start_loop_segment).count();
@@ -506,9 +511,9 @@ int main()
         {
             if (T_diff < 1e-6*num_particle){done = 1;}
             
-            string name1 = "output/Benchmark 1/result " + to_string(option) + "/output_1_" + to_string(loop_count) + ".csv";
-            string name2 = "output/Benchmark 1/result " + to_string(option) + "/output_2_" + to_string(loop_count) + ".csv";
-            string name3 = "output/Benchmark 1/result " + to_string(option) + "/output_3_" + to_string(loop_count) + ".csv";
+            string name1 = "output/Benchmark 1/result" + to_string(option) + "/output_1_" + to_string(loop_count) + ".csv";
+            string name2 = "output/Benchmark 1/result" + to_string(option) + "/output_2_" + to_string(loop_count) + ".csv";
+            string name3 = "output/Benchmark 1/result" + to_string(option) + "/output_3_" + to_string(loop_count) + ".csv";
 
             ofstream output4, output5, output6;
 

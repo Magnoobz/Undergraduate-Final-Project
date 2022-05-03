@@ -47,7 +47,7 @@ int main()
     double eay = 1;
 
     vector<int> ny_s{5 , 10, 20, 25, 40, 50, 75, 100, 125, 150};
-    int option = 1;
+    int option = 9;
     int    nx  = ny_s[option]*2;
     int    ny  = ny_s[option];
 
