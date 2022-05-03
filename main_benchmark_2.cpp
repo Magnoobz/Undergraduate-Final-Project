@@ -46,8 +46,8 @@ int main()
     double eax = 1;
     double eay = 1;
 
-    vector<int> ny_s{5 , 10, 20, 25, 40, 50, 75, 100};
-    int option = 2;
+    vector<int> ny_s{5 , 10, 20, 25, 40, 50, 75, 100, 125, 150};
+    int option = 7;
     int    nx  = ny_s[option]*2;
     int    ny  = ny_s[option];
 
@@ -242,7 +242,7 @@ int main()
         else if ((x[i] > x1 - 3*dx)&&(x[i] < x1-2*dx)){right2[i] = 1;}
 
         if (y[i] < y0 + dx){bottom[i] = 1;}
-        else if (y[i] > y1 - 3*dx){top[i] = 1;}
+        else if (y[i] > y1 - 2*dx){top[i] = 1;}
     }
 
     
@@ -254,16 +254,16 @@ int main()
 
         if (left[i] == 1)
         {
-            double multiplier = pow(1-(x[i])/2*dx,1);
+            double multiplier = pow(1-(x[i])/(1.5*dx),2);
             area_temp += hy[i]*multiplier;
             qx[i] = multiplier;
             flux.push_back(i);
         }
-        if ((top[i] == 1) || (top[i] == 1))
+        if ((top[i] == 1))
         {
             if ((right[i] == 1)){continue;}
             
-            hhy[i] = -h/3;
+            hhy[i] = -h/2;
         }
 
         if (right[i] == 1)
@@ -504,7 +504,7 @@ int main()
         
         if (loop_count % 1000 == 0)
         {
-            if (T_diff < 5e-3){done = 1;}
+            if (T_diff < 1e-6*num_particle){done = 1;}
             
             string name1 = "output/Benchmark 1/result " + to_string(option) + "/output_1_" + to_string(loop_count) + ".csv";
             string name2 = "output/Benchmark 1/result " + to_string(option) + "/output_2_" + to_string(loop_count) + ".csv";
