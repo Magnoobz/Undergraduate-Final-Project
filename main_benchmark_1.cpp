@@ -47,7 +47,7 @@ int main()
     double eay = 1;
 
     vector<int> ny_s{5 , 10, 20, 25, 40, 50, 75, 100, 125, 150};
-    int option = 2;
+    int option = 7;
     int    nx  = ny_s[option]*2;
     int    ny  = ny_s[option];
 
@@ -242,7 +242,7 @@ int main()
         else if ((x[i] > x1 - 3*dx)&&(x[i] < x1-2*dx)){right2[i] = 1;}
 
         if (y[i] < y0 + dx){bottom[i] = 1;}
-        else if (y[i] > y1 - 3*dx){top[i] = 1;}
+        else if (y[i] > y1 - 2*dx){top[i] = 1;}
     }
 
     
@@ -254,7 +254,7 @@ int main()
 
         if (left[i] == 1)
         {
-            double multiplier = pow(1-(x[i])/(1.5*dx),2);
+            double multiplier = pow(1-(x[i])/(1.5*dx),1);
             area_temp += hy[i]*multiplier;
             qx[i] = multiplier;
             flux.push_back(i);
@@ -263,7 +263,7 @@ int main()
         {
             if ((right[i] == 1)){continue;}
             
-            hhy[i] = -h/3;
+            hhy[i] = -h/2;
         }
 
         if (right[i] == 1)
