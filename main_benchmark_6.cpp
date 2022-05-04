@@ -47,9 +47,11 @@ int main()
     double eay = 1;
 
     vector<int> ny_s{5 , 10, 20, 25, 40, 50, 75, 100, 125, 150};
-    int option = 6;
+    int option = 7;
     int    nx  = ny_s[option]*2;
     int    ny  = ny_s[option];
+
+    option = 6;
 
     // Other Parameters
     double Re      = 2.1;
@@ -254,7 +256,7 @@ int main()
 
         if (left[i] == 1)
         {
-            double multiplier = pow(1-(x[i])/(1.5*dx),1);
+            double multiplier = pow(1-(x[i])/(2*dx),0);
             area_temp += hy[i]*multiplier;
             qx[i] = multiplier;
             flux.push_back(i);
@@ -267,7 +269,7 @@ int main()
 
             if (x[i] < 0.025)
             {
-                hhy[i] = hhy[i]/(1+0.15*(0.025-x[i])/0.025);
+                hhy[i] = hhy[i]/(1+0.1*(0.025-x[i])/0.025);
             }
         }
 
@@ -343,6 +345,13 @@ int main()
     for (int i = 0; i < num_mirror; i++)
     {
         Temp[mirror[i]] = 2*T-Temp[real[i]];
+    }
+
+    int num_not_dummy = 0;
+    # pragma omp parallel for
+    for (int i = 0; i < num_particle; i++)
+    {
+        num_not_dummy = num_not_dummy + 1 - is_dummy[i];
     }
 
     // Neighbor Search
@@ -509,7 +518,7 @@ int main()
         
         if (loop_count % 1000 == 0)
         {
-            if (T_diff < 1e-6*num_particle){done = 1;}
+            if (T_diff < 1e-5*num_not_dummy){done = 1;}
             
             string name1 = "output/Benchmark 1/result" + to_string(option) + "/output_1_" + to_string(loop_count) + ".csv";
             string name2 = "output/Benchmark 1/result" + to_string(option) + "/output_2_" + to_string(loop_count) + ".csv";
@@ -554,7 +563,7 @@ int main()
 
     
     double tol = 1e-8;
-    double T_point1, T_point2, T_point3;
+    double T_point1, T_point2, T_point3, T_point4, T_point5;
     # pragma omp parallel for
     for (int i = 0; i < num_particle; i++)
     {
@@ -570,6 +579,14 @@ int main()
         {
             T_point3 = Temp[i];
         }
+        else if ((0.1-tol < x[i]) && (x[i] < 0.1+tol) && (0.05-tol < y[i]) && (y[i] < 0.05+tol))
+        {
+            T_point2 = Temp[i];
+        }
+        else if ((0.1-tol < x[i]) && (x[i] < 0.1+tol) && (-tol < y[i]) && (y[i] < tol))
+        {
+            T_point3 = Temp[i];
+        }
     }
     
     
@@ -582,11 +599,14 @@ int main()
     printf("Point 1                     : %f C\n", T_point1);
     printf("Point 2                     : %f C\n", T_point2);
     printf("Point 3                     : %f C\n", T_point3);
+    printf("Point 4                     : %f C\n", T_point4);
+    printf("Point 5                     : %f C\n", T_point5);
 
     ofstream output7;
-    output7.open("output/Benchmark 1/result " + to_string(option) + "/Summary.csv");
+    output7.open("output/Benchmark 1/result" + to_string(option) + "/Summary.csv");
     
     output7  << "Number of Particle," << x.size() <<"\n"
+            << "Not Dummy Particle," << num_not_dummy << "\n"
             << "Movement Time," << movement_ms/1000 << "\n"
             << "Neighbor Search Time," << neighbor_time_ms/1000 << "\n"
             << "Calc Eta Time," << eta_time_ms/1000 << "\n"
@@ -596,5 +616,7 @@ int main()
             << "Calculation Time," << calc_time_ms/1000 << "\n"
             << "Point 1," << T_point1 << "\n"
             << "Point 2," << T_point2 << "\n"
-            << "Point 3," << T_point3 << "\n";
+            << "Point 3," << T_point3 << "\n"
+            << "Point 4," << T_point4 << "\n"
+            << "Point 5," << T_point5 << "\n";
 }
