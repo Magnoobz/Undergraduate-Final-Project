@@ -584,7 +584,7 @@ int main()
     printf("Point 3                     : %f C\n", T_point3);
 
     ofstream output7;
-    output7.open("output/Benchmark 1/result " + to_string(option) + "/Summary.csv");
+    output7.open("output/Benchmark 1/result" + to_string(option) + "/Summary.csv");
     
     output7  << "Number of Particle," << x.size() <<"\n"
             << "Movement Time," << movement_ms/1000 << "\n"

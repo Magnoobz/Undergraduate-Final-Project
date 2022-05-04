@@ -254,7 +254,7 @@ int main()
 
         if (left[i] == 1)
         {
-            double multiplier = pow(1-(x[i])/(1.5*dx),1);
+            double multiplier = pow(1-(x[i])/(2*dx),1/2.);
             area_temp += hy[i]*multiplier;
             qx[i] = multiplier;
             flux.push_back(i);
@@ -267,7 +267,7 @@ int main()
 
             if (x[i] < 0.025)
             {
-                hhy[i] = hhy[i]/(1+0.15*(0.025-x[i])/0.025);
+                hhy[i] = hhy[i]/(1+0.1*(0.025-x[i])/0.025);
             }
         }
 
