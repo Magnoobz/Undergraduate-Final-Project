@@ -47,7 +47,7 @@ int main()
     double eay = 1;
 
     vector<int> ny_s{5 , 10, 20, 25, 40, 50, 75, 100, 125, 150};
-    int option = 7;
+    int option = 9;
     int    nx  = ny_s[option]*2;
     int    ny  = ny_s[option];
 
@@ -581,11 +581,11 @@ int main()
         }
         else if ((0.1-tol < x[i]) && (x[i] < 0.1+tol) && (0.05-tol < y[i]) && (y[i] < 0.05+tol))
         {
-            T_point2 = Temp[i];
+            T_point4 = Temp[i];
         }
         else if ((0.1-tol < x[i]) && (x[i] < 0.1+tol) && (-tol < y[i]) && (y[i] < tol))
         {
-            T_point3 = Temp[i];
+            T_point5 = Temp[i];
         }
     }
     
