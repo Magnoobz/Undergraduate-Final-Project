@@ -355,7 +355,7 @@ int main()
     // Neighbor Search
     auto start_neighbor_search = chrono::high_resolution_clock::now();
     
-    Re = 2.5;
+    Re = 2.9;
     hash_grid(xw,yw,h_temp[0]*Re,ncell_x,ncell_y,ncell,hash_table,gridpos_x,gridpos_y);   
     spatial_hash_neighbor(xw,yw,h_temp[0]*Re,ncell_x,ncell_y,gridpos_x,gridpos_y,hash_table,neighbor,weight_data);
 
