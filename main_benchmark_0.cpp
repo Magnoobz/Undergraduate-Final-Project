@@ -46,12 +46,10 @@ int main()
     double eax = 1;
     double eay = 1;
 
-    vector<int> ny_s{5 , 10, 20, 25, 40, 50, 75, 100, 125, 150};
-    int option = 5;
+    vector<int> ny_s{5 , 10, 20, 25, 40, 50, 75, 100, 125, 150, 200};
+    int option = 0;
     int    nx  = ny_s[option]*2;
     int    ny  = ny_s[option];
-
-    option = 0;
 
     // Other Parameters
     double Re      = 2.1;
@@ -398,9 +396,9 @@ int main()
     double sijstar_time_ms = std::chrono::duration_cast <std::chrono::milliseconds> (end_sijstar-end_bi).count();
     printf("Sij Star Time           : %f second\n", sijstar_time_ms/1000);
 
-    string name1 = "output/Benchmark 1/result" + to_string(option) + "/output_1_0.csv";
-    string name2 = "output/Benchmark 1/result" + to_string(option) + "/output_2_0.csv";
-    string name3 = "output/Benchmark 1/result" + to_string(option) + "/output_3_0.csv";
+    string name1 = "output/Benchmark 1/"+to_string(Re)+"/result" + to_string(option) + "/output_1_0.csv";
+    string name2 = "output/Benchmark 1/"+to_string(Re)+"/result" + to_string(option) + "/output_2_0.csv";
+    string name3 = "output/Benchmark 1/"+to_string(Re)+"/result" + to_string(option) + "/output_3_0.csv";
 
     ofstream output1, output2, output3;
 
@@ -520,9 +518,9 @@ int main()
         {
             if (T_diff < 1e-5*num_not_dummy){done = 1;}
             
-            string name1 = "output/Benchmark 1/result" + to_string(option) + "/output_1_" + to_string(loop_count) + ".csv";
-            string name2 = "output/Benchmark 1/result" + to_string(option) + "/output_2_" + to_string(loop_count) + ".csv";
-            string name3 = "output/Benchmark 1/result" + to_string(option) + "/output_3_" + to_string(loop_count) + ".csv";
+            string name1 = "output/Benchmark 1/"+to_string(Re)+"/result" + to_string(option) + "/output_1_" + to_string(loop_count) + ".csv";
+            string name2 = "output/Benchmark 1/"+to_string(Re)+"/result" + to_string(option) + "/output_2_" + to_string(loop_count) + ".csv";
+            string name3 = "output/Benchmark 1/"+to_string(Re)+"/result" + to_string(option) + "/output_3_" + to_string(loop_count) + ".csv";
 
             ofstream output4, output5, output6;
 
@@ -603,7 +601,7 @@ int main()
     printf("Point 5                     : %f C\n", T_point5);
 
     ofstream output7;
-    output7.open("output/Benchmark 1/result" + to_string(option) + "/Summary.csv");
+    output7.open("output/Benchmark 1/"+to_string(Re)+"/result" + to_string(option) + "/Summary.csv");
     
     output7  << "Number of Particle," << x.size() <<"\n"
             << "Not Dummy Particle," << num_not_dummy << "\n"
