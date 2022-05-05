@@ -47,7 +47,7 @@ int main()
     double eay = 1;
 
     vector<int> ny_s{5 , 10, 20, 25, 40, 50, 75, 100, 125, 150};
-    int option = 9;
+    int option = 5;
     int    nx  = ny_s[option]*2;
     int    ny  = ny_s[option];
 
@@ -267,10 +267,10 @@ int main()
             
             hhy[i] = -h/2;
 
-            // if (x[i] < 0.025)
-            // {
-            //     hhy[i] = hhy[i]/(1+0.15*(0.025-x[i])/0.025);
-            // }
+            if (x[i] < 0.025)
+            {
+                hhy[i] = hhy[i]/(1+0.05*(0.025-x[i])/0.025);
+            }
         }
 
         if (right[i] == 1)

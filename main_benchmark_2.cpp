@@ -47,7 +47,7 @@ int main()
     double eay = 1;
 
     vector<int> ny_s{5 , 10, 20, 25, 40, 50, 75, 100, 125, 150};
-    int option = 9;
+    int option = 5;
     int    nx  = ny_s[option]*2;
     int    ny  = ny_s[option];
 
@@ -256,7 +256,7 @@ int main()
 
         if (left[i] == 1)
         {
-            double multiplier = pow(1-(x[i])/(2*dx),1/2.);
+            double multiplier = pow(1-(x[i])/(2*dx),0);
             area_temp += hy[i]*multiplier;
             qx[i] = multiplier;
             flux.push_back(i);
@@ -267,10 +267,10 @@ int main()
             
             hhy[i] = -h/2;
 
-            // if (x[i] < 0.025)
-            // {
-            //     hhy[i] = hhy[i]/(1+0.15*(0.025-x[i])/0.025);
-            // }
+            if (x[i] < 0.025)
+            {
+                hhy[i] = hhy[i]/(1+0.05*(0.025-x[i])/0.025);
+            }
         }
 
         if (right[i] == 1)
@@ -357,7 +357,7 @@ int main()
     // Neighbor Search
     auto start_neighbor_search = chrono::high_resolution_clock::now();
     
-    Re = 2.1;
+    Re = 2.9;
     hash_grid(xw,yw,h_temp[0]*Re,ncell_x,ncell_y,ncell,hash_table,gridpos_x,gridpos_y);   
     spatial_hash_neighbor(xw,yw,h_temp[0]*Re,ncell_x,ncell_y,gridpos_x,gridpos_y,hash_table,neighbor,weight_data);
 
