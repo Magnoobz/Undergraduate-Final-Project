@@ -158,7 +158,7 @@ int main()
     calc_Ri_a(h_temp,Re,7,Ri_a);
 
     loop_count = 0;
-    iter       = 0;
+    iter       = 100;
 
     while (true)
     {
