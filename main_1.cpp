@@ -486,7 +486,7 @@ int main()
     auto start_loop_segment = chrono::high_resolution_clock::now();
     auto end_loop_segment = chrono::high_resolution_clock::now();
 
-    while (/*loop_count < iter*/ false)
+    while (/*loop_count < iter*/ true)
     {
         if (loop_count % 1000 == 0)
         {
