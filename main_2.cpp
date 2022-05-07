@@ -113,7 +113,7 @@ int main()
 
     // Initialize Particle
     initialize_particle_2(x0*eax,x1*eax,y0*eay,y1*eay,0.00275001*eax,0.09725001*eax,0.00250001*eay,0.04750001*eay,nx,ny,n_dummy,"no_move",not_moving,xw,yw,h_temp);
-    initialize_particle_2((0.00275+dx/2)*eax,(0.09725+dx/2)*eax,(0.0025+dy/2)*eay,(0.0475+dy/2)*eay,1,0,1,0,252,120,0,"all_move",not_moving,xw,yw,h_temp);
+    initialize_particle_2((0.00275+dx/2)*eax,(0.09725+dx/2)*eax,(0.0025+dy/2)*eay,(0.0475+dy/2)*eay,1,0,1,0,252*eax,120*eay,0,"all_move",not_moving,xw,yw,h_temp);
     num_particle = xw.size();
 
     // Particle Movement

@@ -112,8 +112,8 @@ int main()
     vector<int> right1, right2, right3, right4;
 
     // Initialize Particle
-    initialize_particle_2(x0*eax,x1*eax,y0*eay,y1*eay,0.00275001*eax,0.09725001*eax,0.00225001*eay,0.04775001*eay,nx,ny,n_dummy,"no_move",not_moving,xw,yw,h_temp);
-    initialize_particle_2((0.00275+dx/2)*eax,(0.09725+dx/2)*eax,(0.00225+dy/2)*eay,(0.04775+dy/2)*eay,1,0,1,0,270,130,0,"all_move",not_moving,xw,yw,h_temp);
+    initialize_particle_2(x0*eax,x1*eax,y0*eay,y1*eay,0.0045001*eax,0.0905001*eax,0.00225001*eay,0.04775001*eay,nx,ny,n_dummy,"no_move",not_moving,xw,yw,h_temp);
+    initialize_particle_2((0.0045+dx/2)*eax,(0.0905+dx/2)*eax,(0.00225+dy/2)*eay,(0.04775+dy/2)*eay,1,0,1,0,260*eax,130*eay,0,"all_move",not_moving,xw,yw,h_temp);
     num_particle = xw.size();
 
     // Particle Movement
