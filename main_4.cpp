@@ -43,13 +43,13 @@ int main()
     double cp  = 10;        // heat capacity (J/kgK)
 
     // Dommain Discretization
-    double eax = 0.75;
+    double eax = 0.5;
     double eay = 1;
 
     vector<int> ny_s{5 , 10, 20, 25, 40, 50, 75, 100, 125, 150, 200};
     int option = 10;
-    int    nx  = ny_s[option]*2;
-    int    ny  = ny_s[option];
+    int    nx  = ny_s[option]*2*eax;
+    int    ny  = ny_s[option]*eay;
 
     // Other Parameters
     double Re      = 1.8;
@@ -112,8 +112,8 @@ int main()
     vector<int> right1, right2, right3, right4;
 
     // Initialize Particle
-    initialize_particle_2(x0*eax,x1*eax,y0*eay,y1*eay,0.00275001*eax,0.09725001*eax,0.00225001*eay,0.04775001*eay,nx,ny,n_dummy,"no_move",not_moving,xw,yw,h_temp);
-    initialize_particle_2((0.00275+dx/2)*eax,(0.09725+dx/2)*eax,(0.00225+dy/2)*eay,(0.04775+dy/2)*eay,1,0,1,0,270,130,0,"all_move",not_moving,xw,yw,h_temp);
+    initialize_particle_2(x0*eax,x1*eax,y0*eay,y1*eay,1,0,1,0,nx,ny,n_dummy,"no_move",not_moving,xw,yw,h_temp);
+    // initialize_particle_2((0.002+dx/2)*eax,(0.098+dx/2)*eax,(0.0025+dy/2)*eay,(0.0475+dy/2)*eay,1,0,1,0,320,150,0,"all_move",not_moving,xw,yw,h_temp);
     num_particle = xw.size();
 
     // Particle Movement
@@ -424,7 +424,7 @@ int main()
     // Neighbor Search
     auto start_neighbor_search = chrono::high_resolution_clock::now();
     
-    Re = 2.1;
+    Re = 1.8;
     hash_grid(xw,yw,h_temp[0]*Re,ncell_x,ncell_y,ncell,hash_table,gridpos_x,gridpos_y);   
     spatial_hash_neighbor(xw,yw,h_temp[0]*Re,ncell_x,ncell_y,gridpos_x,gridpos_y,hash_table,neighbor,weight_data);
 

@@ -43,7 +43,7 @@ int main()
     double cp  = 10;        // heat capacity (J/kgK)
 
     // Dommain Discretization
-    double eax = 1;
+    double eax = 0.75;
     double eay = 1;
 
     vector<int> ny_s{5 , 10, 20, 25, 40, 50, 75, 100, 125, 150, 200};
