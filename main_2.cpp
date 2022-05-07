@@ -465,7 +465,7 @@ int main()
     double sijstar_time_ms = std::chrono::duration_cast <std::chrono::milliseconds> (end_sijstar-end_bi).count();
     printf("Sij Star Time           : %f second\n", sijstar_time_ms/1000);
 
-    string name1 = "output/Benchmark 1/result" + to_string(option) + "/output_0.csv";
+    string name1 = "output/Benchmark 1/result/" + to_string(num_not_dummy) + "_output_0.csv";
 
     ofstream output1;
 
@@ -572,7 +572,7 @@ int main()
             {
                 done = 1;
             
-                string name1 = "output/Benchmark 1/result" + to_string(option) + "/output_" + to_string(loop_count) + ".csv";
+                string name1 = "output/Benchmark 1/result/" + to_string(num_not_dummy) + "_output_" + to_string(loop_count) + ".csv";
                 
                 ofstream output4;
 
@@ -640,7 +640,7 @@ int main()
     printf("Point 5                     : %f C\n", T_point5);
 
     ofstream output7;
-    output7.open("output/Benchmark 1/result" + to_string(option) + "/Summary.csv");
+    output7.open("output/Benchmark 1/result/" + to_string(num_not_dummy) + "_Summary.csv");
     
     output7  << "Number of Particle," << x.size() <<"\n"
             << "Not Dummy Particle," << num_not_dummy << "\n"
