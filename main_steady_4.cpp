@@ -43,17 +43,17 @@ int main()
     double cp  = 10;        // heat capacity (J/kgK)
 
     // Dommain Discretization
-    double eax = 0.75;
+    double eax = 1.5;
     double eay = 1;
 
     vector<int> ny_s{5 , 10, 20, 25, 40, 50, 75, 100, 125, 150, 200};
-    int option = 10;
+    int option = 6;
     int    nx  = ny_s[option]*2*eax;
     int    ny  = ny_s[option]*eay;
 
     // Other Parameters
-    double Re      = 1.8;
-    double n_dummy = 6;
+    double Re      = 2.1;
+    double n_dummy = 3;
     double t       = 0;
     double dt      = 1e-3;
     int    done    = 0;
@@ -108,88 +108,15 @@ int main()
     double area_temp;
     vector<int> flux;
 
-    vector<int> top, bottom, left, right;
-    vector<int> right1, right2, right3, right4;
+    vector<int> top, bottom, left, right, right1, right2;
 
     // Initialize Particle
-    initialize_particle_2(x0*eax,x1*eax,y0*eay,y1*eay,1,0,1,0,nx,ny,n_dummy,"no_move",not_moving,xw,yw,h_temp);
-    // initialize_particle_2((0.002+dx/2)*eax,(0.098+dx/2)*eax,(0.0025+dy/2)*eay,(0.0475+dy/2)*eay,1,0,1,0,320,150,0,"all_move",not_moving,xw,yw,h_temp);
+    initialize_particle(x0*eax,x1*eax,y0*eay,y1*eay,nx,ny,n_dummy,not_moving,xw,yw,h_temp);
     num_particle = xw.size();
-
-    // Particle Movement
-    auto start_movement = chrono::high_resolution_clock::now();
-
-    // for (int i = 0; i < num_particle; i++)
-    // {
-    //     if (yw[i] > 0.035*eay || xw[i] > 0.07*eax)
-    //     {
-    //         split_index.push_back(i);
-    //     }
-    // }
-    // Particle_Splitting(split_index,not_moving,xw,yw,h_temp);
-    // num_particle = xw.size();
-    // split_index.clear();
-
-    // for (int i = 0; i < num_particle; i++)
-    // {
-    //     if ((yw[i] > 0.044*eay) || (xw[i] > 0.094*eax) || (yw[i] < 0.006*eay) || (xw[i] < 0.006*eax))
-    //     {
-    //         split_index.push_back(i);
-    //     }
-    // }
-    // Particle_Splitting(split_index,not_moving,xw,yw,h_temp);
-    // num_particle = xw.size();
-    // split_index.clear();
-
-    
-    // for (int i = 0; i < num_particle; i++)
-    // {
-    //     if ((yw[i] > 0.0465*eay) || (xw[i] > 0.0965*eax) || (yw[i] < 0.0035*eay) || (xw[i] < 0.0035*eax))
-    //     {
-    //         split_index.push_back(i);
-    //     }
-    // }
-    // Particle_Splitting(split_index,not_moving,xw,yw,h_temp);
-    // num_particle = xw.size();
-    // split_index.clear();
-
-
-
-    calc_Ri_a(h_temp,Re,7,Ri_a);
-
-    loop_count = 0;
-    iter       = 0;
-
-    while (true)
-    {
-        if(loop_count == iter)
-        {
-            break;
-        }
-
-        loop_count++;        
-        hash_grid(xw,yw,h_temp[0]*Re,ncell_x,ncell_y,ncell,hash_table,gridpos_x,gridpos_y);
-        spatial_hash_neighbor_2(xw,yw,h_temp,1,Re,ncell_x,ncell_y,gridpos_x,gridpos_y,hash_table,neighbor,weight_data);  
-        calc_Ni(xw,yw,h_temp,neighbor,weight_data,Re,Ri_a,Ni_a);
-        calc_ci(xw,Ri_a,Ni_a,ci);
-        calc_DeltaX(xw,yw,h_temp,Re,0.1,neighbor,weight_data,ci,delta_x,delta_y);
-
-        # pragma omp parallel for
-        for (int i = 0; i < num_particle; i++)
-        {
-            if (not_moving[i] == 1)
-            {
-                continue;
-            }
-
-            xw[i] = xw[i] + delta_x[i];
-            yw[i] = yw[i] + delta_y[i];
-        }
-    }
 
     auto end_movement = chrono::high_resolution_clock::now();
     
-    double movement_ms = chrono::duration_cast <chrono::milliseconds> (end_movement-start_movement).count();
+    double movement_ms = chrono::duration_cast <chrono::milliseconds> (end_movement-start_time).count();
     printf("Particle Movement Time      : %f second\n\n", movement_ms/1000);
 
     // Assign Variables Value
@@ -220,8 +147,6 @@ int main()
     right.resize(num_particle);
     right1.resize(num_particle);
     right2.resize(num_particle);
-    right3.resize(num_particle);
-    right4.resize(num_particle);
 
     # pragma omp parallel for
     for (int i = 0; i < num_particle; i++)
@@ -239,7 +164,7 @@ int main()
         hx[i] = h_temp[i]/eax;
         hy[i] = h_temp[i]/eay;
         
-        if ((x[i] < x0) || (x[i] > x1+4*dx) || (y[i] < y0) || (y[i] > y1))
+        if ((x[i] < x0) || (x[i] > x1+2*dx) || (y[i] < y0) || (y[i] > y1))
         {
             is_dummy[i] = 1;
         }
@@ -258,8 +183,6 @@ int main()
         else if ((x[i] > x1 - dx)&&(x[i] < x1)){right[i] = 1;}
         else if ((x[i] > x1 - 2*dx)&&(x[i] < x1-dx)){right1[i] = 1;}
         else if ((x[i] > x1 - 3*dx)&&(x[i] < x1-2*dx)){right2[i] = 1;}
-        else if ((x[i] > x1 - 4*dx)&&(x[i] < x1-3*dx)){right3[i] = 1;}
-        else if ((x[i] > x1 - 5*dx)&&(x[i] < x1-4*dx)){right4[i] = 1;}
 
         if (y[i] < y0 + dx){bottom[i] = 1;}
         else if (y[i] > y1 - 2*dx){top[i] = 1;}
@@ -358,52 +281,6 @@ int main()
         }
     }
 
-    for (int i = 0; i < num_particle; i++)
-    {
-        if (right3[i] == 1)
-        {
-            double x_temp = x[i];
-            double y_temp = y[i];
-
-            for (int j = 0; j < num_particle; j++)
-            {
-                if (is_dummy[j] == 1){continue;}
-
-                if (y[j] == y_temp)
-                {
-                    if ((x[j] > x1+2*dx) && (x[j] < x1+3*dx))
-                    {
-                        real.push_back(i);
-                        mirror.push_back(j);
-                    }
-                }
-            }
-        }
-    }
-
-    for (int i = 0; i < num_particle; i++)
-    {
-        if (right4[i] == 1)
-        {
-            double x_temp = x[i];
-            double y_temp = y[i];
-
-            for (int j = 0; j < num_particle; j++)
-            {
-                if (is_dummy[j] == 1){continue;}
-
-                if (y[j] == y_temp)
-                {
-                    if ((x[j] > x1+3*dx) && (x[j] < x1+4*dx))
-                    {
-                        real.push_back(i);
-                        mirror.push_back(j);
-                    }
-                }
-            }
-        }
-    }
-
     int num_mirror=mirror.size();
     # pragma omp parallel for
     for (int i = 0; i < num_mirror; i++)
@@ -418,13 +295,10 @@ int main()
         num_not_dummy = num_not_dummy + 1 - is_dummy[i];
     }
 
-    printf("Particle                    : %d\n", num_particle);
-    printf("Not Dummy                   : %d\n", num_not_dummy);
-
     // Neighbor Search
     auto start_neighbor_search = chrono::high_resolution_clock::now();
     
-    Re = 1.8;
+    Re = 2.1;
     hash_grid(xw,yw,h_temp[0]*Re,ncell_x,ncell_y,ncell,hash_table,gridpos_x,gridpos_y);   
     spatial_hash_neighbor(xw,yw,h_temp[0]*Re,ncell_x,ncell_y,gridpos_x,gridpos_y,hash_table,neighbor,weight_data);
 
@@ -465,28 +339,26 @@ int main()
     double sijstar_time_ms = std::chrono::duration_cast <std::chrono::milliseconds> (end_sijstar-end_bi).count();
     printf("Sij Star Time           : %f second\n", sijstar_time_ms/1000);
 
-    string name1 = "output/Benchmark 1/result/" + to_string(num_not_dummy) + "_output_0.csv";
+    string name1 = "output/Steady/result_" + to_string(eax) + "/output_1_0.csv";
 
     ofstream output1;
 
     output1.open(name1);
 
-    output1 << "x" << "," << "y" << "," << "h" << "," << "LSMPS_Conserved\n";
+    output1 << "x" << "," << "y" << "," << "LSMPS_Conserved\n";
 
     for (int i = 0; i < num_particle; i++)
     {
         if (x[i] >= x0 && x[i] <= x1 && y[i] >= y0 && y[i] <= y1)
         {
-            output1 << xw[i] << "," << yw[i] << "," << h_temp[i] << "," << Temp[i] << "\n";
+            output1 << xw[i] << "," << yw[i] << "," << Temp[i] << "\n";
         }
     }
     
-    
-
     auto start_loop_segment = chrono::high_resolution_clock::now();
     auto end_loop_segment = chrono::high_resolution_clock::now();
 
-    while (/*loop_count < iter*/ true)
+    while (true)
     {
         if (loop_count % 1000 == 0)
         {
@@ -527,25 +399,6 @@ int main()
             Temp[mirror[i]] = 2*T-Temp[real[i]];
         }
 
-        // for (int i = 0; i < num_particle; i++)
-        // {
-        //     if (right[i] == 1)
-        //     {
-        //         double x_temp = x[i];
-        //         double y_temp = y[i];
-        //         double Temp_temp = Temp[i]-T;
-
-        //         # pragma omp parallel for
-        //         for (int j = 0; j < num_particle; j++)
-        //         {
-        //             if ((y[j] == y_temp))
-        //             {
-        //                 Temp[j] += -Temp_temp; 
-        //             }
-        //         }
-        //     }
-        // }
-        
         double T_diff = 0;
         # pragma omp parallel for
         for (int i = 0; i < num_particle; i++)
@@ -555,7 +408,7 @@ int main()
             T_diff += abs(Temp[i] - T_Temp[i]);
         }
 
-        t+=dt;
+        t          += dt;
         loop_count += 1;
 
         if (loop_count % 1000 == 0)
@@ -566,30 +419,28 @@ int main()
             cout << loop_count <<":"<<"\t"<< t << "\t\t Segment time: " << loop_time_ms/1000 << "\tsecond \t\t" << T_diff << endl;
         }
         
-        if (loop_count % 1000 == 0)
+        if (loop_count % 10000 == 0)
         {
-            if (T_diff < 1e-5*num_not_dummy)
-            {
-                done = 1;
+            if (T_diff < 1e-5*num_not_dummy){done = 1;}
             
-                string name1 = "output/Benchmark 1/result/" + to_string(num_not_dummy) + "_output_" + to_string(loop_count) + ".csv";
-                
-                ofstream output4;
+            string name4 = "output/Steady/result_" + to_string(eax) + "/output_1_" + to_string(loop_count) + ".csv";
+            
+            ofstream output4;
 
-                output4.open(name1);
+            output4.open(name4);
 
-                output4 << "x" << "," << "y" << "," << "h" << "," << "LSMPS_Conserved\n";
+            output4 << "x" << "," << "y" << "," << "LSMPS_Conserved\n";
 
-                for (int i = 0; i < num_particle; i++)
+            for (int i = 0; i < num_particle; i++)
+            {
+                if (x[i] >= x0 && x[i] <= x1 && y[i] >= y0 && y[i] <= y1)
                 {
-                    if (x[i] >= x0 && x[i] <= x1 && y[i] >= y0 && y[i] <= y1)
-                    {
-                        output4 << xw[i] << "," << yw[i] << "," << h_temp[i] << "," << Temp[i] << "\n";
-                    }
+                    output4 << xw[i] << "," << yw[i] << "," << Temp[i] << "\n";
                 }
             }
         }
 
+        if (loop_count > 400000){break;}
         if (done == 1){break;}
     }
     
@@ -625,8 +476,7 @@ int main()
         }
     }
     
-    printf("Particle                    : %d\n", num_particle);
-    printf("Not Dummy                   : %d\n", num_not_dummy);
+    
     printf("\nNeighbor Search Time        : %f second\n", neighbor_time_ms/1000);
     printf("Calc Eta Time               : %f second\n", eta_time_ms/1000);
     printf("Sij Time                    : %f second\n", sij_time_ms/1000);
@@ -640,7 +490,7 @@ int main()
     printf("Point 5                     : %f C\n", T_point5);
 
     ofstream output7;
-    output7.open("output/Benchmark 1/result/" + to_string(num_not_dummy) + "_Summary.csv");
+    output7.open("output/Steady/result_" + to_string(eax) + "/Summary.csv");
     
     output7  << "Number of Particle," << x.size() <<"\n"
             << "Not Dummy Particle," << num_not_dummy << "\n"

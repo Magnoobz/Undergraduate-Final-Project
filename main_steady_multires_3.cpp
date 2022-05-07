@@ -43,16 +43,16 @@ int main()
     double cp  = 10;        // heat capacity (J/kgK)
 
     // Dommain Discretization
-    double eax = 0.75;
+    double eax = 1;
     double eay = 1;
 
     vector<int> ny_s{5 , 10, 20, 25, 40, 50, 75, 100, 125, 150, 200};
-    int option = 10;
-    int    nx  = ny_s[option]*2;
-    int    ny  = ny_s[option];
+    int option = 6;
+    int    nx  = ny_s[option]*2*eax;
+    int    ny  = ny_s[option]*eay;
 
     // Other Parameters
-    double Re      = 1.8;
+    double Re      = 2.1;
     double n_dummy = 6;
     double t       = 0;
     double dt      = 1e-3;
@@ -112,8 +112,8 @@ int main()
     vector<int> right1, right2, right3, right4;
 
     // Initialize Particle
-    initialize_particle_2(x0*eax,x1*eax,y0*eay,y1*eay,0.00200001*eax,0.09800001*eax,0.00250001*eay,0.04750001*eay,nx,ny,n_dummy,"no_move",not_moving,xw,yw,h_temp);
-    initialize_particle_2((0.002+dx/2)*eax,(0.098+dx/2)*eax,(0.0025+dy/2)*eay,(0.0475+dy/2)*eay,1,0,1,0,320*eax,150*eay,0,"all_move",not_moving,xw,yw,h_temp);
+    initialize_particle_2(x0*eax,x1*eax,y0*eay,y1*eay,0.0050001*eax,0.0950001*eax,0.0050001*eay,0.0450001*eay,nx,ny,n_dummy,"no_move",not_moving,xw,yw,h_temp);
+    initialize_particle_2((0.005+dx/2)*eax,(0.095+dx/2)*eax,(0.005+dy/2)*eay,(0.045+dy/2)*eay,1,0,1,0,45,20,0,"all_move",not_moving,xw,yw,h_temp);
     num_particle = xw.size();
 
     // Particle Movement
@@ -424,7 +424,7 @@ int main()
     // Neighbor Search
     auto start_neighbor_search = chrono::high_resolution_clock::now();
     
-    Re = 2.1;
+    Re = 2.9;
     hash_grid(xw,yw,h_temp[0]*Re,ncell_x,ncell_y,ncell,hash_table,gridpos_x,gridpos_y);   
     spatial_hash_neighbor(xw,yw,h_temp[0]*Re,ncell_x,ncell_y,gridpos_x,gridpos_y,hash_table,neighbor,weight_data);
 
@@ -465,7 +465,8 @@ int main()
     double sijstar_time_ms = std::chrono::duration_cast <std::chrono::milliseconds> (end_sijstar-end_bi).count();
     printf("Sij Star Time           : %f second\n", sijstar_time_ms/1000);
 
-    string name1 = "output/Benchmark 1/result/" + to_string(num_not_dummy) + "_output_0.csv";
+    option = 4;
+    string name1 = "output/Steady/Multires_" + to_string(option) + "/output_0.csv";
 
     ofstream output1;
 
@@ -486,7 +487,7 @@ int main()
     auto start_loop_segment = chrono::high_resolution_clock::now();
     auto end_loop_segment = chrono::high_resolution_clock::now();
 
-    while (/*loop_count < iter*/ true)
+    while (true)
     {
         if (loop_count % 1000 == 0)
         {
@@ -526,25 +527,6 @@ int main()
         {
             Temp[mirror[i]] = 2*T-Temp[real[i]];
         }
-
-        // for (int i = 0; i < num_particle; i++)
-        // {
-        //     if (right[i] == 1)
-        //     {
-        //         double x_temp = x[i];
-        //         double y_temp = y[i];
-        //         double Temp_temp = Temp[i]-T;
-
-        //         # pragma omp parallel for
-        //         for (int j = 0; j < num_particle; j++)
-        //         {
-        //             if ((y[j] == y_temp))
-        //             {
-        //                 Temp[j] += -Temp_temp; 
-        //             }
-        //         }
-        //     }
-        // }
         
         double T_diff = 0;
         # pragma omp parallel for
@@ -566,30 +548,28 @@ int main()
             cout << loop_count <<":"<<"\t"<< t << "\t\t Segment time: " << loop_time_ms/1000 << "\tsecond \t\t" << T_diff << endl;
         }
         
-        if (loop_count % 1000 == 0)
+        if (loop_count % 10000 == 0)
         {
-            if (T_diff < 1e-5*num_not_dummy)
-            {
-                done = 1;
+            if (T_diff < 1e-5*num_not_dummy){done = 1;}
+        
+            string name1 = "output/Steady/Multires_" + to_string(option) + "/output_" + to_string(loop_count) + ".csv";
             
-                string name1 = "output/Benchmark 1/result/" + to_string(num_not_dummy) + "_output_" + to_string(loop_count) + ".csv";
-                
-                ofstream output4;
+            ofstream output4;
 
-                output4.open(name1);
+            output4.open(name1);
 
-                output4 << "x" << "," << "y" << "," << "h" << "," << "LSMPS_Conserved\n";
+            output4 << "x" << "," << "y" << "," << "h" << "," << "LSMPS_Conserved\n";
 
-                for (int i = 0; i < num_particle; i++)
+            for (int i = 0; i < num_particle; i++)
+            {
+                if (x[i] >= x0 && x[i] <= x1 && y[i] >= y0 && y[i] <= y1)
                 {
-                    if (x[i] >= x0 && x[i] <= x1 && y[i] >= y0 && y[i] <= y1)
-                    {
-                        output4 << xw[i] << "," << yw[i] << "," << h_temp[i] << "," << Temp[i] << "\n";
-                    }
+                    output4 << xw[i] << "," << yw[i] << "," << h_temp[i] << "," << Temp[i] << "\n";
                 }
             }
         }
 
+        if (loop_count > 400000){break;}
         if (done == 1){break;}
     }
     
@@ -640,7 +620,7 @@ int main()
     printf("Point 5                     : %f C\n", T_point5);
 
     ofstream output7;
-    output7.open("output/Benchmark 1/result/" + to_string(num_not_dummy) + "_Summary.csv");
+    output7.open("output/Steady/Multires_" + to_string(option) + "/Summary.csv");
     
     output7  << "Number of Particle," << x.size() <<"\n"
             << "Not Dummy Particle," << num_not_dummy << "\n"
