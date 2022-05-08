@@ -53,9 +53,9 @@ int main()
 
     double n_dummy = 3;
     
-    initialize_particle_3D_2(x_left,0.03,y_bottom,y_top,z_back,z_front,45,ny,nz,0,3,3,3,3,3,not_moving,x_w,y_w,z_w,h_temp);
-    initialize_particle_3D_2(0.03,0.04,y_bottom,y_top,z_back,z_front,12,8,8,0,0,3,3,3,3,not_moving,x_w,y_w,z_w,h_temp);
-    initialize_particle_3D_2(0.04,x_right,y_bottom,y_top,z_back,z_front,54,6,6,3,0,3,3,3,3,not_moving,x_w,y_w,z_w,h_temp);
+    initialize_particle_3D_2(x_left*eax,0.03*eax,y_bottom,y_top,z_back,z_front,45,ny,nz,0,3,3,3,3,3,not_moving,x_w,y_w,z_w,h_temp);
+    initialize_particle_3D_2(0.03*eax,0.04*eax,y_bottom,y_top,z_back,z_front,12,8,8,0,0,3,3,3,3,not_moving,x_w,y_w,z_w,h_temp);
+    initialize_particle_3D_2(0.04*eax,x_right*eax,y_bottom,y_top,z_back,z_front,54,6,6,3,0,3,3,3,3,not_moving,x_w,y_w,z_w,h_temp);
     int num_particle = x_w.size();
 
     vector<double> T(num_particle);
