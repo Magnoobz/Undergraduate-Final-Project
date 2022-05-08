@@ -35,7 +35,7 @@ int main()
     double z_front  = 0.01;
     double z_back   = 0;
 
-    double eax = 1;
+    double eax = 1.5;
     double eay = 1;
     double eaz = 1;
 
