@@ -43,11 +43,11 @@ int main()
     double cp  = 10;        // heat capacity (J/kgK)
 
     // Dommain Discretization
-    double eax = 1.4;
+    double eax = 1.5;
     double eay = 1;
 
     vector<int> ny_s{5 , 10, 20, 25, 40, 50, 75, 100, 125, 150, 200};
-    int option = 6;
+    int option = 7;
     int    nx  = ny_s[option]*2*eax;
     int    ny  = ny_s[option]*eay;
 
@@ -112,8 +112,8 @@ int main()
     vector<int> right1, right2, right3, right4;
 
     // Initialize Particle
-    initialize_particle_2(x0*eax,x1*eax,y0*eay,y1*eay,0.010001*eax,0.090001*eax,0.0050001*eay,0.0450001*eay,nx,ny,n_dummy,"no_move",not_moving,xw,yw,h_temp);
-    initialize_particle_2((0.01+dx/2)*eax,(0.09+dx/2)*eax,(0.005+dy/2)*eay,(0.045+dy/2)*eay,1,0,1,0,60*eax,30*eay,0,"all_move",not_moving,xw,yw,h_temp);
+    initialize_particle_2(x0*eax,x1*eax,y0*eay,y1*eay,0.0050001*eax,0.0950001*eax,0.0050001*eay,0.0450001*eay,nx,ny,n_dummy,"no_move",not_moving,xw,yw,h_temp);
+    initialize_particle_2((0.005+dx/2)*eax,(0.095+dx/2)*eax,(0.005+dy/2)*eay,(0.045+dy/2)*eay,1,0,1,0,90*eax,40*eay,0,"all_move",not_moving,xw,yw,h_temp);
     num_particle = xw.size();
 
     // Particle Movement
@@ -486,6 +486,8 @@ int main()
 
     auto start_loop_segment = chrono::high_resolution_clock::now();
     auto end_loop_segment = chrono::high_resolution_clock::now();
+
+    loop_count = 0;
 
     while (true)
     {
