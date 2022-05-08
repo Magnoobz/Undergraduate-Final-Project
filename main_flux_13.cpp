@@ -315,8 +315,8 @@ int main()
 
     double calc_time_ms = std::chrono::duration_cast <std::chrono::milliseconds> (end_calculation-start_time).count();
 
-    printf("Number of Particle            : %f second\n", num_particle);
-    printf("Not Dummy Particle            : %f second\n\n", num_not_dummy);
+    printf("Number of Particle            : %d\n", num_particle);
+    printf("Not Dummy Particle            : %d\n\n", num_not_dummy);
     printf("Calculation Time              : %f second\n", calc_time_ms/1000);
 
     ofstream output;
