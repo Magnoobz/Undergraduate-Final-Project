@@ -114,7 +114,7 @@ void initialize_particle_3D_2(double x_left,
     double n_dummy_f = dummy_t+0.5;
     double n_dummy_ba = dummy_ba+0.5;
 
-    double x_par = x_left-n_dummy_r*dx;
+    double x_par = x_left-n_dummy_l*dx;
     double y_par = y_bottom-n_dummy_bo*dy;
     double z_par = z_back-n_dummy_ba*dz;
 
