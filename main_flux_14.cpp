@@ -31,8 +31,8 @@ int main()
     double x_left   = 0;
     double x_right  = 0.25;
     double y_bottom = 0;
-    double y_top    = 0.002;
-    double z_front  = 0.002;
+    double y_top    = 0.01;
+    double z_front  = 0.01;
     double z_back   = 0;
 
     double eax = 1;
@@ -40,8 +40,8 @@ int main()
     double eaz = 1;
 
     int nx = 375;
-    int ny = 3;
-    int nz = 3;
+    int ny = 15;
+    int nz = 15;
 
     double dx = (x_right-x_left)/nx;
 
@@ -120,7 +120,7 @@ int main()
         }
     }
 
-    double P_den = 0.4/area_flux;
+    double P_den = 10/area_flux;
     # pragma omp parallel for
     for (int i = 0; i < num_particle; i++)
     {
