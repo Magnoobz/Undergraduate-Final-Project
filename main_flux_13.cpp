@@ -160,6 +160,13 @@ int main()
     vector<double> Bi_x, Bi_y, Bi_z;
     calculate_Bi_3D(Sij_x, Sij_y, Sij_z, x, is_dummy, neighbor, Bi_x, Bi_y, Bi_z);
 
+    for (int i = 0; i < num_particle; i++)
+    {
+        Bi_x[i] = 0;
+        Bi_y[i] = 0;
+        Bi_z[i] = 0;
+    }
+
     vector<vector<double>> Sij_Star_x(num_particle), Sij_Star_y(num_particle), Sij_Star_z(num_particle);
     calculate_Sij_Star_3D(Sij_x, Sij_y, Sij_z, Sij_Star_x, Sij_Star_y, Sij_Star_z, x, is_dummy, neighbor);
 
