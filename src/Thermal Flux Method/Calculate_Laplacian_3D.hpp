@@ -49,8 +49,6 @@ void calc_Laplacian_3D(vector<double> k,
             
             temp[i] += kdeltaT_ij_x[i][j]*Sij_Star_x[i][j] + kdeltaT_ij_y[i][j]*Sij_Star_y[i][j] + + kdeltaT_ij_z[i][j]*Sij_Star_z[i][j];
         }
-
-        temp[i] += Bi_x[i]*kdeltaT_x[i] + Bi_y[i]*kdeltaT_y[i] + Bi_z[i]*kdeltaT_z[i] + heat_flux[i];
         
         temp[i] = temp[i]/(k[i]*hx[i]*hy[i]*hz[i]);
     }
@@ -104,8 +102,6 @@ void calc_dTdt_3D(vector<double> cp,
             
             temp[i] += kdeltaT_ij_x[i][j]*Sij_Star_x[i][j] + kdeltaT_ij_y[i][j]*Sij_Star_y[i][j] + kdeltaT_ij_z[i][j]*Sij_Star_z[i][j];
         }
-
-        temp[i] += Bi_x[i]*kdeltaT_x[i] + Bi_y[i]*kdeltaT_y[i] + Bi_z[i]*kdeltaT_z[i] + heat_flux[i];
         
         temp[i] = temp[i]/(cp[i]*rho[i]*hx[i]*hy[i]*hz[i]);
     }
